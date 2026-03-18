@@ -1,0 +1,31 @@
+package model;
+
+import java.awt.*;
+import java.util.Objects;
+
+public class ColorProperty implements BallProperty {
+    private final Color _color;
+
+    public ColorProperty(Color color) {
+        _color = color;
+    }
+
+    public Color getColor() {
+        return _color;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+
+        if (obj == null || getClass() != obj.getClass()) return false;
+        
+        ColorProperty other = (ColorProperty) obj;
+        return Objects.equals(_color, other._color);
+    }
+
+    @Override
+    public String toString() {
+        return _color.toString();
+    }
+}
