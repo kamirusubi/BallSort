@@ -1,8 +1,13 @@
 import game.Game;
+import view.GameFrame;
+
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        Game game = new Game();
-
+        SwingUtilities.invokeLater(() -> {
+            GameFrame frame = new GameFrame();
+            frame.setVisible(true);
+        });
     }
 }

@@ -25,7 +25,7 @@ public class Game {
 
     public Level loadRandomLevel() {
         Random random = new Random();
-        int levelNumber = random.nextInt(3) + 1;
+        int levelNumber = random.nextInt(8) + 1;
         return LevelFactory.getLevel(levelNumber);
     }
 
@@ -67,5 +67,17 @@ public class Game {
     public boolean isLevelCompleted() {
         return _level.isLevelCompleted(_rules);
     }
+
+    public Level getCurrentLevel() {
+        return _level;
+    }
+
+    public void reset() {
+        if (_level != null) {
+            _level.reset();
+            _isGameFinished = false;
+        }
+    }
+
 
 }
