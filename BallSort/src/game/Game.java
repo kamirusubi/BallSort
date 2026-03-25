@@ -19,11 +19,11 @@ public class Game {
 
 
     public void start() {
-        _level = loadRandomLevel();
+        _level = getRandomLevel();
     }
 
 
-    public Level loadRandomLevel() {
+    public Level getRandomLevel() {
         Random random = new Random();
         int levelNumber = random.nextInt(8) + 1;
         return LevelFactory.getLevel(levelNumber);
@@ -78,6 +78,4 @@ public class Game {
             _isGameFinished = false;
         }
     }
-
-
 }

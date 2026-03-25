@@ -28,9 +28,9 @@ public class CompositeSequenceRule implements SequenceRule {
     }
 
     @Override
-    public boolean canStack(Ball topBall, Ball targetTopBall) {
+    public boolean canStack(Ball topBall, Ball bottomBall) {
         for (SequenceRule rule : _rules) {
-            if (!rule.canStack(topBall, targetTopBall)) {
+            if (!rule.canStack(topBall, bottomBall)) {
                 return false;
             }
         }

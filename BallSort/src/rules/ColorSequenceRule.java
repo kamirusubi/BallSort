@@ -6,18 +6,18 @@ import model.ColorProperty;
 public class ColorSequenceRule implements SequenceRule {
 
     @Override
-    public boolean canStack(Ball topBall, Ball targetTopBall) {
-        if (targetTopBall == null) {
+    public boolean canStack(Ball topBall, Ball bottomBall) {
+        if (bottomBall == null) {
             return true;
         }
 
-        ColorProperty fromColor = topBall.getProperty(ColorProperty.class);
-        ColorProperty targetColor = targetTopBall.getProperty(ColorProperty.class);
+        ColorProperty topColor = topBall.getProperty(ColorProperty.class);
+        ColorProperty bottomColor = bottomBall.getProperty(ColorProperty.class);
 
-        if (fromColor == null || targetColor == null) {
+        if (topColor == null || bottomColor == null) {
             return false;
         }
 
-        return fromColor.equals(targetColor);
+        return topColor.equals(bottomColor);
     }
 }

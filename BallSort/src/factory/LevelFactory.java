@@ -13,6 +13,19 @@ public class LevelFactory {
         return tube;
     }
 
+    // Уровень для тестов
+    public static Level createSimpleLevel() {
+        int capacity = 4;
+        List<Tube> tubes = new ArrayList<>();
+
+        tubes.add(createTube(capacity, "RED", "RED"));
+        tubes.add(createTube(capacity, "BLUE"));
+        tubes.add(createTube(capacity, "BLUE"));
+        tubes.add(createTube(capacity)); // пустая
+
+        return new Level(tubes);
+    }
+
     public static Level createLevel1() {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();

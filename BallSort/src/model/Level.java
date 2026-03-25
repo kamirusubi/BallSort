@@ -6,20 +6,18 @@ import java.util.*;
 public class Level {
 
     private final List<Tube> _tubes = new ArrayList<>();
-    private final Map<Tube, List<Ball>> _initialBallsState = new HashMap<>();
+    private final Map<Tube, List<Ball>> _initialLevelState = new HashMap<>();
 
     public Level(List<Tube> tubes) {
         for (Tube tube : tubes) {
             Tube tubeCopy = new Tube(tube.getCapacity());
-            List<Ball> ballsCopy = new ArrayList<>();
 
             for (Ball ball : tube.getBalls()) {
                 tubeCopy.push(ball);
-                ballsCopy.add(ball);
             }
 
             _tubes.add(tubeCopy);
-            _initialBallsState.put(tubeCopy, ballsCopy);
+            _initialLevelState.put(tubeCopy, tube.getBalls());
         }
     }
 
@@ -30,21 +28,19 @@ public class Level {
 
     public void reset() {
         for (Tube tube : _tubes) {
-            List<Ball> initialBalls = _initialBallsState.get(tube);
+            List<Ball> initialBalls = _initialLevelState.get(tube);
             tube.fill(initialBalls != null ? new ArrayList<>(initialBalls) : new ArrayList<>());
         }
     }
 
     public boolean executeMove(Tube from, Tube to) {
-
         if (from.isEmpty() || !to.hasSpace()) {
             return false;
         }
 
         Ball movedBall = from.pop();
-        to.push(movedBall);
 
-        return true;
+        return to.push(movedBall);
     }
 
     public boolean isLevelCompleted(SequenceRule rules) {

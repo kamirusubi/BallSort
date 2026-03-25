@@ -65,7 +65,6 @@ public class TubeWidget extends JPanel {
 
     public void setError() {
         setBorder(BorderFactory.createLineBorder(ERROR_BORDER_COLOR, 3));
-        repaint();
     }
 
     public void clearError() {
@@ -74,7 +73,6 @@ public class TubeWidget extends JPanel {
         } else {
             setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         }
-        repaint();
     }
 
     @Override

@@ -12,17 +12,17 @@ import java.util.Map;
 
 public class LevelView extends JPanel {
 
+    private static final int TUBES_PER_ROW = 3;
+
     private Level _level;
-    private final Map<Tube, TubeWidget> _tubeWidgets;
+    private final Map<Tube, TubeWidget> _tubeWidgets = new HashMap<>();
     private TubeWidget _selectedWidget = null;
     private final Game _game;
-    private static final int TUBES_PER_ROW = 3;
     private Timer _errorTimer;
     private TubeWidget _errorWidget = null;
 
     public LevelView(Level level, Game game) {
         _game = game;
-        _tubeWidgets = new HashMap<>();
         _level = level;
 
         setLayout(new GridBagLayout());
@@ -68,37 +68,34 @@ public class LevelView extends JPanel {
                 }
             });
 
-            int row = i / TUBES_PER_ROW;
-            int col = i % TUBES_PER_ROW;
-
-            gbc.gridx = col;
-            gbc.gridy = row;
+            gbc.gridx = i % TUBES_PER_ROW;
+            gbc.gridy = i / TUBES_PER_ROW;
             add(widget, gbc);
         }
     }
 
     private void onTubeClick(Tube tube) {
-        if (_selectedWidget == null) {
+        if (_selectedWidget == null) { // если первое нажатие
             if (!tube.isEmpty()) {
                 _selectedWidget = _tubeWidgets.get(tube);
                 _selectedWidget.setSelected(true);
             }
-        } else {
+        } else { // если второе нажатие
             Tube fromTube = _selectedWidget.getTube();
-            if (fromTube == tube) {
-                _selectedWidget.setSelected(false);
+            if (fromTube == tube) { // нажали на ту же трубу
+                _selectedWidget.setSelected(false); // отменяем выделение
                 _selectedWidget = null;
-            } else {
-                if (_game.tryMove(fromTube, tube)) {
-                    _selectedWidget.setSelected(false);
+            } else { // нажали на другую трубу
+                if (_game.tryMove(fromTube, tube)) { // если получилось переместить шарик
+                    _selectedWidget.setSelected(false); //отменяем выделение и проверяем победу
                     _selectedWidget = null;
                     repaint();
 
                     if (_game.isLevelCompleted()) {
                         JOptionPane.showMessageDialog(this, "Победа!");
                     }
-                } else {
-                    TubeWidget errorWidget = _tubeWidgets.get(tube);
+                } else { // если не получилось переместить шарик
+                    TubeWidget errorWidget = _tubeWidgets.get(tube); // отменяем выделение и выделяем красным
                     errorWidget.setError();
                     _errorWidget = errorWidget;
                     _errorTimer.start();
@@ -115,8 +112,8 @@ public class LevelView extends JPanel {
     public void repaint() {
         super.repaint();
         if (_tubeWidgets != null) {
-            for (TubeWidget widget : _tubeWidgets.values()) {
-                widget.repaint();
+            for (TubeWidget tubeWidget : _tubeWidgets.values()) {
+                tubeWidget.repaint();
             }
         }
     }

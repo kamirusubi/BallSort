@@ -19,8 +19,8 @@ public class ColorProperty implements BallProperty {
 
         if (obj == null || getClass() != obj.getClass()) return false;
         
-        ColorProperty that = (ColorProperty) obj;
-        return Objects.equals(_color, that._color);
+        ColorProperty other = (ColorProperty) obj;
+        return Objects.equals(_color, other._color);
     }
 
     @Override

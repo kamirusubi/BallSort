@@ -4,10 +4,10 @@ import java.util.*;
 
 public class Tube {
     private final Stack<Ball> _balls = new Stack<>();
-    private final int capacity;
+    private final int _capacity;
 
     public Tube(int capacity) {
-        this.capacity = capacity;
+        _capacity = capacity;
     }
 
     public Tube(int capacity, List<Ball> initialBalls) {
@@ -16,6 +16,21 @@ public class Tube {
             throw new IllegalArgumentException("Too many balls for tube capacity");
         }
         fill(initialBalls);
+    }
+
+    public void fill(List<Ball> initialBalls) {
+        _balls.clear();
+        for (Ball ball : initialBalls) {
+            _balls.push(ball);
+        }
+    }
+
+    public boolean push(Ball ball) {
+        if (hasSpace()) {
+            _balls.push(ball);
+            return true;
+        }
+        return false;
     }
 
     public Ball peek() {
@@ -32,23 +47,8 @@ public class Tube {
         return _balls.pop();
     }
 
-    public boolean push(Ball ball) {
-        if (hasSpace()) {
-            _balls.push(ball);
-            return true;
-        }
-        return false;
-    }
-
-    public void fill(List<Ball> initialBalls) {
-        _balls.clear();
-        for (Ball ball : initialBalls) {
-            _balls.push(ball);
-        }
-    }
-
     public boolean hasSpace() {
-        return _balls.size() < capacity;
+        return _balls.size() < _capacity;
     }
 
     public boolean isEmpty() {
@@ -56,7 +56,7 @@ public class Tube {
     }
 
     public boolean isFull() {
-        return _balls.size() >= capacity;
+        return _balls.size() >= _capacity;
     }
 
     public int getBallCount() {
@@ -64,7 +64,7 @@ public class Tube {
     }
 
     public int getCapacity() {
-        return capacity;
+        return _capacity;
     }
 
     public List<Ball> getBalls() {
@@ -76,10 +76,9 @@ public class Tube {
         StringBuilder sb = new StringBuilder("[");
         for (int i = _balls.size() - 1; i >= 0; i--) {
             sb.append(_balls.get(i).toString());
+            if(i > 0) sb.append("_");
         }
-        while (sb.length() - 1 < capacity) {
-            sb.append("_");
-        }
+
         sb.append("]");
         return sb.toString();
     }
