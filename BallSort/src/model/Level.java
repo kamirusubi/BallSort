@@ -6,7 +6,7 @@ import java.util.*;
 public class Level {
 
     private final List<Tube> _tubes = new ArrayList<>();
-    private final Map<Tube, List<Ball>> _initialLevelState = new HashMap<>();
+        private final Map<Tube, List<Ball>> _initialLevelState = new HashMap<>();
 
     public Level(List<Tube> tubes) {
         for (Tube tube : tubes) {
