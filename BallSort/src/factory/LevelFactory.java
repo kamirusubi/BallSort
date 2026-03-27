@@ -1,13 +1,14 @@
 package factory;
 
 import model.*;
+import java.awt.Color;
 import java.util.*;
 
 public class LevelFactory {
 
-    private static Tube createTube(int capacity, String... colors) {
+    private static Tube createTube(int capacity, Color... colors) {
         Tube tube = new Tube(capacity);
-        for (String color : colors) {
+        for (Color color : colors) {
             tube.push(new Ball(new ColorProperty(color)));
         }
         return tube;
@@ -18,9 +19,9 @@ public class LevelFactory {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "RED"));
-        tubes.add(createTube(capacity, "BLUE"));
-        tubes.add(createTube(capacity, "BLUE"));
+        tubes.add(createTube(capacity, Color.RED, Color.RED));
+        tubes.add(createTube(capacity, Color.BLUE));
+        tubes.add(createTube(capacity, Color.BLUE));
         tubes.add(createTube(capacity)); // пустая
 
         return new Level(tubes);
@@ -30,9 +31,9 @@ public class LevelFactory {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "RED", "GREEN", "RED"));
-        tubes.add(createTube(capacity, "BLUE", "BLUE", "BLUE", "BLUE"));
-        tubes.add(createTube(capacity, "GREEN", "RED", "GREEN", "GREEN"));
+        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.GREEN, Color.RED));
+        tubes.add(createTube(capacity, Color.BLUE, Color.BLUE, Color.BLUE, Color.BLUE));
+        tubes.add(createTube(capacity, Color.GREEN, Color.RED, Color.GREEN, Color.GREEN));
         tubes.add(createTube(capacity)); // пустая
         tubes.add(createTube(capacity)); // пустая
 
@@ -43,11 +44,11 @@ public class LevelFactory {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "BLUE", "GREEN", "YELLOW"));
-        tubes.add(createTube(capacity, "RED", "BLUE", "GREEN", "ORANGE"));
-        tubes.add(createTube(capacity, "RED", "YELLOW", "ORANGE", "BLUE"));
-        tubes.add(createTube(capacity, "GREEN", "YELLOW", "ORANGE", "RED"));
-        tubes.add(createTube(capacity, "BLUE", "GREEN", "YELLOW", "ORANGE"));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE));
+        tubes.add(createTube(capacity, Color.RED, Color.YELLOW, Color.ORANGE, Color.BLUE));
+        tubes.add(createTube(capacity, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED));
+        tubes.add(createTube(capacity, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE));
         tubes.add(createTube(capacity)); // пустая
 
         return new Level(tubes);
@@ -57,9 +58,9 @@ public class LevelFactory {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "BLUE", "RED", "YELLOW"));
-        tubes.add(createTube(capacity, "GREEN", "BLUE", "GREEN", "YELLOW"));
-        tubes.add(createTube(capacity, "RED", "BLUE", "GREEN", "YELLOW"));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.RED, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.GREEN, Color.BLUE, Color.GREEN, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW));
         tubes.add(createTube(capacity)); // пустая
         tubes.add(createTube(capacity)); // пустая
 
@@ -67,13 +68,13 @@ public class LevelFactory {
     }
 
     public static Level createLevel4() {
-        int capacity = 4;
+        int capacity = 3;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "RED", "BLUE", "BLUE"));
-        tubes.add(createTube(capacity, "GREEN", "GREEN", "YELLOW", "YELLOW"));
-        tubes.add(createTube(capacity, "RED", "BLUE", "GREEN", "YELLOW"));
-        tubes.add(createTube(capacity)); // пустая
+        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.BLUE));
+        tubes.add(createTube(capacity, Color.GREEN, Color.GREEN, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN));
+        tubes.add(createTube(capacity, Color.YELLOW, Color.YELLOW, Color.BLUE)); // пустая
         tubes.add(createTube(capacity)); // пустая
 
         return new Level(tubes);
@@ -83,10 +84,10 @@ public class LevelFactory {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "RED", "RED", "BLUE"));
-        tubes.add(createTube(capacity, "BLUE", "BLUE", "GREEN", "GREEN"));
-        tubes.add(createTube(capacity, "GREEN", "YELLOW", "YELLOW", "YELLOW"));
-        tubes.add(createTube(capacity, "RED", "GREEN", "BLUE", "YELLOW"));
+        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.RED, Color.BLUE));
+        tubes.add(createTube(capacity, Color.BLUE, Color.BLUE, Color.GREEN, Color.GREEN));
+        tubes.add(createTube(capacity, Color.GREEN, Color.YELLOW, Color.YELLOW, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW));
         tubes.add(createTube(capacity)); // пустая
         tubes.add(createTube(capacity)); // пустая
 
@@ -97,11 +98,11 @@ public class LevelFactory {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "RED", "RED", "RED"));
-        tubes.add(createTube(capacity, "BLUE", "BLUE", "BLUE", "BLUE"));
-        tubes.add(createTube(capacity, "GREEN", "GREEN", "GREEN", "GREEN"));
-        tubes.add(createTube(capacity, "YELLOW", "YELLOW", "YELLOW", "YELLOW"));
-        tubes.add(createTube(capacity, "RED", "BLUE", "GREEN", "YELLOW"));
+        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.RED, Color.RED));
+        tubes.add(createTube(capacity, Color.BLUE, Color.BLUE, Color.BLUE, Color.BLUE));
+        tubes.add(createTube(capacity, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN));
+        tubes.add(createTube(capacity, Color.YELLOW, Color.YELLOW, Color.YELLOW, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW));
         tubes.add(createTube(capacity)); // пустая
         tubes.add(createTube(capacity)); // пустая
 
@@ -112,11 +113,11 @@ public class LevelFactory {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "BLUE", "GREEN", "YELLOW"));
-        tubes.add(createTube(capacity, "RED", "BLUE", "GREEN", "ORANGE"));
-        tubes.add(createTube(capacity, "RED", "YELLOW", "ORANGE", "BLUE"));
-        tubes.add(createTube(capacity, "GREEN", "YELLOW", "ORANGE", "RED"));
-        tubes.add(createTube(capacity, "BLUE", "GREEN", "YELLOW", "ORANGE"));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE));
+        tubes.add(createTube(capacity, Color.RED, Color.YELLOW, Color.ORANGE, Color.BLUE));
+        tubes.add(createTube(capacity, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED));
+        tubes.add(createTube(capacity, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE));
         tubes.add(createTube(capacity)); // пустая
 
         return new Level(tubes);
@@ -126,11 +127,11 @@ public class LevelFactory {
         int capacity = 5;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, "RED", "RED", "BLUE", "BLUE", "RED"));
-        tubes.add(createTube(capacity, "GREEN", "GREEN", "YELLOW", "YELLOW", "BLUE"));
-        tubes.add(createTube(capacity, "ORANGE", "ORANGE", "RED", "BLUE", "YELLOW"));
-        tubes.add(createTube(capacity, "GREEN", "YELLOW", "ORANGE", "RED", "ORANGE"));
-        tubes.add(createTube(capacity, "BLUE", "GREEN", "YELLOW", "ORANGE", "GREEN"));
+        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.BLUE, Color.BLUE, Color.RED));
+        tubes.add(createTube(capacity, Color.GREEN, Color.GREEN, Color.YELLOW, Color.YELLOW, Color.BLUE));
+        tubes.add(createTube(capacity, Color.ORANGE, Color.ORANGE, Color.RED, Color.BLUE, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED, Color.ORANGE));
+        tubes.add(createTube(capacity, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.GREEN));
         tubes.add(createTube(capacity)); // пустая
         tubes.add(createTube(capacity)); // пустая
 

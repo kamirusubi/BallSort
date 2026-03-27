@@ -1,15 +1,16 @@
 package model;
 
+import java.awt.*;
 import java.util.Objects;
 
 public class ColorProperty implements BallProperty {
-    private final String _color;
+    private final Color _color;
 
-    public ColorProperty(String color) {
+    public ColorProperty(Color color) {
         _color = color;
     }
 
-    public String getColor() {
+    public Color getColor() {
         return _color;
     }
 
@@ -25,6 +26,6 @@ public class ColorProperty implements BallProperty {
 
     @Override
     public String toString() {
-        return _color;
+        return _color.toString();
     }
 }

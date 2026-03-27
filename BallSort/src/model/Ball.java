@@ -30,6 +30,6 @@ public class Ball {
     @Override
     public String toString() {
         ColorProperty colorProp = getProperty(ColorProperty.class);
-        return colorProp != null ? colorProp.getColor().substring(0, 1) : "?";
+        return colorProp != null ? colorProp.getColor().toString() : "?";
     }
 }
