@@ -3,11 +3,15 @@ package view;
 import model.Tube;
 import model.Ball;
 import model.ColorProperty;
+import rules.ColorSequenceRule;
+import rules.CompositeSequenceRule;
+import rules.SequenceRule;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 public class TubeWidget extends JPanel {
 
@@ -20,10 +24,12 @@ public class TubeWidget extends JPanel {
 
 
     private final Tube _tube;
+    private final SequenceRule _rules;
     private boolean _isSelected = false;
 
-    public TubeWidget(Tube tube) {
+    public TubeWidget(Tube tube, SequenceRule rules) {
         _tube = tube;
+        _rules = rules;
 
         int height = calculateHeight();
         setPreferredSize(new Dimension(TUBE_WIDTH, height));
@@ -71,7 +77,9 @@ public class TubeWidget extends JPanel {
 
         int startY = getHeight() - BOTTOM_PADDING;
 
-        java.util.List<Ball> balls = _tube.getBalls();
+        List<Ball> balls = _tube.getBalls();
+
+        List<Ball> liftedBalls = _isSelected ? _tube.peekSequence(_rules) : java.util.Collections.emptyList();
 
         for (int i = 0; i < balls.size(); i++) {
             Ball ball = balls.get(i);
@@ -81,7 +89,7 @@ public class TubeWidget extends JPanel {
 
             int y = startY - (i + 1) * BALL_DIAMETER;
 
-            if (_isSelected && i == balls.size() - 1) {
+            if (_isSelected && liftedBalls.contains(ball)) {
                 y -= 10;
             }
 

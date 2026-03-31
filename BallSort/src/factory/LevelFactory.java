@@ -8,9 +8,11 @@ public class LevelFactory {
 
     private static Tube createTube(int capacity, Color... colors) {
         Tube tube = new Tube(capacity);
+        List<Ball> balls = new ArrayList<>();
         for (Color color : colors) {
-            tube.push(new Ball(new ColorProperty(color)));
+            balls.add(new Ball(new ColorProperty(color)));
         }
+        tube.pushSequence(balls);
         return tube;
     }
 

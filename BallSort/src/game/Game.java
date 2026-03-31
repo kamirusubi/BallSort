@@ -4,24 +4,22 @@ import model.*;
 import rules.CompositeSequenceRule;
 import rules.ColorSequenceRule;
 import factory.LevelFactory;
+import rules.SequenceRule;
 
 import java.util.*;
 
 public class Game {
     private Level _level;
-    private final CompositeSequenceRule _rules;
+    private final CompositeSequenceRule _rules = new CompositeSequenceRule(new ColorSequenceRule());
     private boolean _isGameFinished = false;
 
-    public Game() {
-        _rules = new CompositeSequenceRule();
-        _rules.addRule(new ColorSequenceRule());
+    public SequenceRule getRules() {
+        return _rules;
     }
-
 
     public void start() {
         _level = getRandomLevel();
     }
-
 
     public Level getRandomLevel() {
         Random random = new Random();
@@ -35,7 +33,7 @@ public class Game {
             return false;
         }
 
-        if(!_level.executeMove(from, to)) return false;
+        if(!_level.executeMove(from, to, _rules)) return false;
 
         if (isLevelCompleted()) {
             _isGameFinished = true;
@@ -57,10 +55,10 @@ public class Game {
             return false;
         }
 
-        Ball ballToMove = from.peek();
-        Ball targetTopBall = to.peek();
+        Ball fromTopBall = from.peekOne();
+        Ball targetTopBall = to.peekOne();
 
-        return _rules.canStack(ballToMove, targetTopBall);
+        return _rules.canStack(fromTopBall, targetTopBall);
     }
 
 

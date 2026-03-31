@@ -58,7 +58,7 @@ public class LevelView extends JPanel {
 
         for (int i = 0; i < tubeCount; i++) {
             Tube tube = tubes.get(i);
-            TubeWidget widget = new TubeWidget(tube);
+            TubeWidget widget = new TubeWidget(tube, _game.getRules());
             _tubeWidgets.put(tube, widget);
 
             widget.addMouseListener(new java.awt.event.MouseAdapter() {

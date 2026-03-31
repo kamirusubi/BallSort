@@ -1,9 +1,11 @@
 package model;
 
+import rules.SequenceRule;
+
 import java.util.*;
 
 public class Tube {
-    private final Stack<Ball> _balls = new Stack<>();
+    private final List<Ball> _balls = new ArrayList<>();
     private final int _capacity;
 
     public Tube(int capacity) {
@@ -20,31 +22,81 @@ public class Tube {
 
     public void fill(List<Ball> initialBalls) {
         _balls.clear();
-        for (Ball ball : initialBalls) {
-            _balls.push(ball);
-        }
+        _balls.addAll(initialBalls);
     }
 
-    public boolean push(Ball ball) {
+    public Ball peekOne(){
+        if (_balls.isEmpty()) {
+            return null;
+        }
+        return _balls.getLast();
+    }
+
+    public List<Ball> peekSequence(SequenceRule rules) {
+        List<Ball> result = new ArrayList<>();
+
+        if (_balls.isEmpty()) {
+            return result;
+        }
+
+        Ball currentBall = _balls.getLast();
+        boolean canStack = true;
+
+        result.add(currentBall);
+
+        for (int i = _balls.size() - 2; i >= 0 && canStack; i--) {
+            Ball nextBall = _balls.get(i);
+            canStack = rules.canStack(nextBall, currentBall);
+
+            if(canStack){
+                currentBall = nextBall;
+                result.add(currentBall);
+            }
+        }
+
+
+        return result;
+    }
+
+    public Ball popOne() {
+        if (_balls.isEmpty()) {
+            return null;
+        }
+        return _balls.removeLast();
+    }
+
+    public List<Ball> popSequence(SequenceRule rules) {
+        List<Ball> result = new ArrayList<>();
+
+        if (_balls.isEmpty()) {
+            return result;
+        }
+
+        Ball currentBall = popOne();
+        result.add(currentBall);
+
+        while (!_balls.isEmpty() && rules.canStack(_balls.getLast(), currentBall)) {
+            currentBall = popOne();
+            result.add(currentBall);
+        }
+
+        return result;
+    }
+
+    public void pushOne(Ball ball) {
         if (hasSpace()) {
-            _balls.push(ball);
-            return true;
+            _balls.add(ball);
         }
-        return false;
     }
 
-    public Ball peek() {
-        if (_balls.isEmpty()) {
-            return null;
-        }
-        return _balls.peek();
-    }
+    public boolean pushSequence(List<Ball> balls){
+        if(!hasSpace()) return false;
 
-    public Ball pop() {
-        if (_balls.isEmpty()) {
-            return null;
+        for (Ball ball : balls) {
+            pushOne(ball);
         }
-        return _balls.pop();
+
+        return true;
     }
 
     public boolean hasSpace() {

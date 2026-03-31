@@ -8,7 +8,7 @@ import java.awt.*;
 public class GameFrame extends JFrame {
 
     private final Game _game = new Game();
-    private LevelView _levelView;
+    private final LevelView _levelView;
 
     public GameFrame() {
         _game.start();
