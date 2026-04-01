@@ -18,7 +18,7 @@ public class LevelFactory {
 
     // Уровень для тестов
     public static Level createSimpleLevel() {
-        int capacity = 4;
+        int capacity = 2;
         List<Tube> tubes = new ArrayList<>();
 
         tubes.add(createTube(capacity, Color.RED, Color.RED));

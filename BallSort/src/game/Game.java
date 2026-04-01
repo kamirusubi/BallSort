@@ -21,6 +21,10 @@ public class Game {
         _level = LevelFactory.getRandomLevel();
     }
 
+    public void startForTests() {
+        _level = LevelFactory.createSimpleLevel();
+    }
+
     public boolean tryMove(Tube from, Tube to) {
         if (!validateMove(from, to)) {
             return false;
