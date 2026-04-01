@@ -18,15 +18,8 @@ public class Game {
     }
 
     public void start() {
-        _level = getRandomLevel();
+        _level = LevelFactory.getRandomLevel();
     }
-
-    public Level getRandomLevel() {
-        Random random = new Random();
-        int levelNumber = random.nextInt(8) + 1;
-        return LevelFactory.getLevel(levelNumber);
-    }
-
 
     public boolean tryMove(Tube from, Tube to) {
         if (!validateMove(from, to)) {

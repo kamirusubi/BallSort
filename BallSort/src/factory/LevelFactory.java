@@ -76,7 +76,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity, Color.RED, Color.RED, Color.BLUE));
         tubes.add(createTube(capacity, Color.GREEN, Color.GREEN, Color.YELLOW));
         tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN));
-        tubes.add(createTube(capacity, Color.YELLOW, Color.YELLOW, Color.BLUE)); // пустая
+        tubes.add(createTube(capacity, Color.YELLOW, Color.YELLOW, Color.BLUE));
         tubes.add(createTube(capacity)); // пустая
 
         return new Level(tubes);
@@ -138,6 +138,12 @@ public class LevelFactory {
         tubes.add(createTube(capacity)); // пустая
 
         return new Level(tubes);
+    }
+
+    public static Level getRandomLevel() {
+        Random random = new Random();
+        int levelNumber = random.nextInt(8) + 1;
+        return getLevel(levelNumber);
     }
 
     public static Level getLevel(int levelNumber) {

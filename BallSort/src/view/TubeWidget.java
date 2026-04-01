@@ -19,7 +19,6 @@ public class TubeWidget extends JPanel {
     public static final int BALL_DIAMETER = 30;
     private static final int BOTTOM_PADDING = 2;
     private static final int TOP_PADDING = 15;
-    private static final Map<String, Color> BALL_COLORS = new HashMap<>();
     private static final Color ERROR_BORDER_COLOR = Color.RED;
 
 
