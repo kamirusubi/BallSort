@@ -44,9 +44,9 @@ class LevelTest {
 
         assertEquals(originalTubes.size(), newTubes.size());
 
-        originalTubes.getFirst().popOne();
+        originalTubes.get(0).popOne();
 
-        assertNotEquals(originalTubes.getFirst().getBallCount(), newTubes.getFirst().getBallCount());
+        assertNotEquals(originalTubes.get(0).getBallCount(), newTubes.get(0).getBallCount());
     }
 
     @Test
@@ -183,7 +183,7 @@ class LevelTest {
 
     @Test
     void test13_ExecuteMoveWithNullParameters() {
-        Tube validTube = tubes.getFirst();
+        Tube validTube = tubes.get(0);
 
         assertThrows(NullPointerException.class, () -> level.executeMove(null, validTube, rule));
 

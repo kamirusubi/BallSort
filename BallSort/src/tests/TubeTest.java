@@ -149,7 +149,7 @@ class TubeTest {
         List<Ball> sequence = tube.peekSequence(rule);
 
         assertEquals(1, sequence.size());
-        assertEquals(Color.RED, sequence.getFirst().getProperty(ColorProperty.class).getColor());
+        assertEquals(Color.RED, sequence.get(0).getProperty(ColorProperty.class).getColor());
         assertEquals(4, tube.getBallCount());
     }
 
@@ -211,7 +211,7 @@ class TubeTest {
         List<Ball> sequence = tube.popSequence(rule);
 
         assertEquals(1, sequence.size());
-        assertEquals(Color.RED, sequence.getFirst().getProperty(ColorProperty.class).getColor());
+        assertEquals(Color.RED, sequence.get(0).getProperty(ColorProperty.class).getColor());
         assertEquals(3, tube.getBallCount());
         assertEquals(Color.BLUE, tube.peekOne().getProperty(ColorProperty.class).getColor());
     }

@@ -29,7 +29,7 @@ public class Tube {
         if (_balls.isEmpty()) {
             return null;
         }
-        return _balls.getLast();
+        return _balls.get(getBallCount()-1);
     }
 
     public List<Ball> peekSequence(SequenceRule rules) {
@@ -39,7 +39,7 @@ public class Tube {
             return result;
         }
 
-        Ball currentBall = _balls.getLast();
+        Ball currentBall = _balls.get(getBallCount()-1);
         boolean canStack = true;
 
         result.add(currentBall);
@@ -62,7 +62,7 @@ public class Tube {
         if (_balls.isEmpty()) {
             return null;
         }
-        return _balls.removeLast();
+        return _balls.remove(getBallCount()-1);
     }
 
     public List<Ball> popSequence(SequenceRule rules) {
@@ -75,7 +75,7 @@ public class Tube {
         Ball currentBall = popOne();
         result.add(currentBall);
 
-        while (!_balls.isEmpty() && rules.canStack(_balls.getLast(), currentBall)) {
+        while (!_balls.isEmpty() && rules.canStack(_balls.get(getBallCount()-1), currentBall)) {
             currentBall = popOne();
             result.add(currentBall);
         }

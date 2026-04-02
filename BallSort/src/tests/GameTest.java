@@ -61,7 +61,7 @@ class GameTest {
     @Test
     void test05_ValidateMoveWithToNull() {
         List<Tube> tubes = game.getCurrentLevel().getTubes();
-        Tube from = tubes.getFirst();
+        Tube from = tubes.get(0);
 
         boolean result = game.validateMove(from, null);
 
@@ -96,7 +96,7 @@ class GameTest {
     @Test
     void test08_ValidateMoveWithTubeNotInLevel() {
         List<Tube> tubes = game.getCurrentLevel().getTubes();
-        Tube from = tubes.getFirst();
+        Tube from = tubes.get(0);
         Tube outsideTube = new Tube(4);
 
         boolean result = game.validateMove(from, outsideTube);
