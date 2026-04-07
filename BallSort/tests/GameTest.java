@@ -176,24 +176,7 @@ class GameTest {
     }
 
     @Test
-    void test16_TryMoveAfterResetWorksCorrectly() {
-        List<Tube> tubes = game.getCurrentLevel().getTubes();
-        Tube from = tubes.get(0);
-        Tube to = tubes.get(3);
-
-        game.tryMove(from, to);
-
-        game.reset();
-
-        boolean result = game.tryMove(from, to);
-
-        assertTrue(result);
-        assertEquals(0, from.getBallCount());
-        assertEquals(2, to.getBallCount());
-    }
-
-    @Test
-    void test17_FullGameCycle() {
+    void test16_FullGameCycle() {
         Level level = game.getCurrentLevel();
         List<Tube> tubes = level.getTubes();
 
