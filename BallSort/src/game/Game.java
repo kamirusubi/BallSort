@@ -12,30 +12,50 @@ public class Game {
     private Level _level;
     private final CompositeSequenceRule _rules = new CompositeSequenceRule(new ColorSequenceRule());
     private boolean _isGameFinished = false;
+    private final List<GameMoveListener> _moveListeners = new ArrayList<>();
 
     public SequenceRule getRules() {
         return _rules;
     }
 
+    public void addMoveListener(GameMoveListener listener) {
+        _moveListeners.add(listener);
+    }
+
+    public void removeMoveListener(GameMoveListener listener) {
+        _moveListeners.remove(listener);
+    }
+
     public void start() {
         _level = LevelFactory.getRandomLevel();
+        _isGameFinished = false;
     }
 
     public void startForTests() {
         _level = LevelFactory.createSimpleLevel();
+        _isGameFinished = false;
     }
 
     public boolean tryMove(Tube from, Tube to) {
+        from.setSelected(false);
+        to.setSelected(false);
+
         if (!validateMove(from, to)) {
+            notifyMoveAttempt(false, from, to);
             return false;
         }
 
-        if(!_level.executeMove(from, to, _rules)) return false;
+        if(!_level.executeMove(from, to, _rules)) {
+            notifyMoveAttempt(false, from, to);
+            return false;
+        }
 
         if (isLevelCompleted()) {
             _isGameFinished = true;
+            notifyGameCompleted();
         }
 
+        notifyMoveAttempt(true, from, to);
         return true;
     }
 
@@ -58,7 +78,6 @@ public class Game {
         return _rules.canStack(fromTopBall, targetTopBall);
     }
 
-
     public boolean isLevelCompleted() {
         return _level.isLevelCompleted(_rules);
     }
@@ -71,6 +90,18 @@ public class Game {
         if (_level != null) {
             _level.reset();
             _isGameFinished = false;
+        }
+    }
+
+    private void notifyMoveAttempt(boolean success, Tube from, Tube to) {
+        for (GameMoveListener listener : _moveListeners) {
+            listener.onMoveAttempt(success, from, to);
+        }
+    }
+
+    private void notifyGameCompleted() {
+        for (GameMoveListener listener : _moveListeners) {
+            listener.onGameCompleted();
         }
     }
 }

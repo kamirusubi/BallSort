@@ -69,6 +69,14 @@ public class Level implements TubeSelectionListener {
         return true;
     }
 
+    public void addLevelListener(TubeSelectionListener listener) {
+        _levelListeners.add(listener);
+    }
+
+    public void removeLevelListener(TubeSelectionListener listener) {
+        _levelListeners.remove(listener);
+    }
+
     private boolean isTubeUniform(Tube tube, SequenceRule rules) {
         if (tube.isEmpty() || tube.getBallCount() == 1) {
             return true;
@@ -88,29 +96,11 @@ public class Level implements TubeSelectionListener {
         return true;
     }
 
-    @Override
-    public void onTubeSelected(Tube tube) {
-        handleTubeSelection(tube);
-    }
-
-    @Override
-    public void onTubeDeselected(Tube tube) {
-        if (_selectedTube == tube) {
-            _selectedTube = null;
-        }
-        notifyTubeDeselected(tube);
-    }
-
-    @Override
-    public void onTwoTubesSelected(Tube from, Tube to) {
-        // Не используется в Level
-    }
-
     private void handleTubeSelection(Tube tube) {
         if (_selectedTube == null) { // Если выбирается первая труба
             if (!tube.isEmpty()) {
                 _selectedTube = tube;
-                notifyTubeSelected(tube);
+                notifyFirstTubeSelected(tube);
             } else { // нельзя выбрать пустую
                 tube.setSelected(false);
             }
@@ -124,29 +114,39 @@ public class Level implements TubeSelectionListener {
         }
     }
 
-    public void addLevelListener(TubeSelectionListener listener) {
-        _levelListeners.add(listener);
-    }
-
-    public void removeLevelListener(TubeSelectionListener listener) {
-        _levelListeners.remove(listener);
-    }
-
     private void notifyMoveAttempt(Tube from, Tube to) {
         for (TubeSelectionListener listener : _levelListeners) {
             listener.onTwoTubesSelected(from, to);
         }
     }
 
-    private void notifyTubeSelected(Tube tube) {
+    private void notifyFirstTubeSelected(Tube tube) {
         for (TubeSelectionListener listener : _levelListeners) {
-            listener.onTubeSelected(tube);
+            listener.onFirstTubeSelected(tube);
         }
     }
 
-    private void notifyTubeDeselected(Tube tube) {
+    private void notifyFirstTubeDeselected(Tube tube) {
         for (TubeSelectionListener listener : _levelListeners) {
-            listener.onTubeDeselected(tube);
+            listener.onFirstTubeDeselected(tube);
         }
+    }
+
+    @Override
+    public void onFirstTubeSelected(Tube tube) {
+        handleTubeSelection(tube);
+    }
+
+    @Override
+    public void onFirstTubeDeselected(Tube tube) {
+        if (_selectedTube == tube) {
+            _selectedTube = null;
+        }
+        notifyFirstTubeDeselected(tube);
+    }
+
+    @Override
+    public void onTwoTubesSelected(Tube from, Tube to) {
+        // Не используется в Level
     }
 }

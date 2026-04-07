@@ -16,7 +16,6 @@ public class TubeWidget extends JPanel {
     private static final int TOP_PADDING = 15;
     private static final Color ERROR_BORDER_COLOR = Color.RED;
 
-
     private final Tube _tube;
     private final SequenceRule _rules;
 
@@ -40,18 +39,8 @@ public class TubeWidget extends JPanel {
         });
     }
 
-    private int calculateHeight() {
-        int capacity = _tube.getCapacity();
-        int totalBallsHeight = capacity * BALL_DIAMETER;
-        return totalBallsHeight + BOTTOM_PADDING + TOP_PADDING;
-    }
-
     public Tube getTube() {
         return _tube;
-    }
-
-    private void onTubeClick() {
-        _tube.setSelected(!_tube.isSelected());
     }
 
     public void updateSelectionVisual() {
@@ -68,6 +57,16 @@ public class TubeWidget extends JPanel {
 
     public void clearError() {
         updateSelectionVisual();
+    }
+
+    private void onTubeClick() {
+        _tube.setSelected(!_tube.isSelected());
+    }
+
+    private int calculateHeight() {
+        int capacity = _tube.getCapacity();
+        int totalBallsHeight = capacity * BALL_DIAMETER;
+        return totalBallsHeight + BOTTOM_PADDING + TOP_PADDING;
     }
 
     @Override

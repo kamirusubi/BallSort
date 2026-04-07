@@ -147,9 +147,9 @@ public class Tube {
     private void notifySelectionChanged() {
         for (TubeSelectionListener listener : _listeners) {
             if (_isSelected) {
-                listener.onTubeSelected(this);
+                listener.onFirstTubeSelected(this);
             } else {
-                listener.onTubeDeselected(this);
+                listener.onFirstTubeDeselected(this);
             }
         }
     }
