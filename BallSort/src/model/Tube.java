@@ -7,6 +7,8 @@ import java.util.*;
 public class Tube {
     private final List<Ball> _balls = new ArrayList<>();
     private final int _capacity;
+    private boolean _isSelected = false;
+    private List<TubeSelectionListener> _listeners = new ArrayList<>();
 
     public Tube(int capacity) {
         _capacity = capacity;
@@ -121,6 +123,33 @@ public class Tube {
 
     public List<Ball> getBalls() {
         return Collections.unmodifiableList(_balls);
+    }
+
+    public boolean isSelected() {
+        return _isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        _isSelected = selected;
+        notifySelectionChanged();
+    }
+
+    public void addSelectionListener(TubeSelectionListener listener) {
+        _listeners.add(listener);
+    }
+
+    public void removeSelectionListener(TubeSelectionListener listener) {
+        _listeners.remove(listener);
+    }
+
+    private void notifySelectionChanged() {
+        for (TubeSelectionListener listener : _listeners) {
+            if (_isSelected) {
+                listener.onTubeSelected(this);
+            } else {
+                listener.onTubeDeselected(this);
+            }
+        }
     }
 
     @Override

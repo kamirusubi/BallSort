@@ -2,15 +2,10 @@ package view;
 
 import model.Tube;
 import model.Ball;
-import model.ColorProperty;
-import rules.ColorSequenceRule;
-import rules.CompositeSequenceRule;
 import rules.SequenceRule;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 
 public class TubeWidget extends JPanel {
@@ -24,7 +19,6 @@ public class TubeWidget extends JPanel {
 
     private final Tube _tube;
     private final SequenceRule _rules;
-    private boolean _isSelected = false;
 
     public TubeWidget(Tube tube, SequenceRule rules) {
         _tube = tube;
@@ -37,6 +31,13 @@ public class TubeWidget extends JPanel {
 
         setBackground(Color.LIGHT_GRAY);
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                onTubeClick();
+            }
+        });
     }
 
     private int calculateHeight() {
@@ -49,9 +50,12 @@ public class TubeWidget extends JPanel {
         return _tube;
     }
 
-    public void setSelected(boolean selected) {
-        _isSelected = selected;
-        if (selected) {
+    private void onTubeClick() {
+        _tube.setSelected(!_tube.isSelected());
+    }
+
+    public void updateSelectionVisual() {
+        if (_tube.isSelected()) {
             setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
         } else {
             setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -63,11 +67,7 @@ public class TubeWidget extends JPanel {
     }
 
     public void clearError() {
-        if (_isSelected) {
-            setBorder(BorderFactory.createLineBorder(Color.GREEN, 3));
-        } else {
-            setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        }
+        updateSelectionVisual();
     }
 
     @Override
@@ -78,13 +78,13 @@ public class TubeWidget extends JPanel {
 
         List<Ball> balls = _tube.getBalls();
 
-        List<Ball> liftedBalls = _isSelected ? _tube.peekSequence(_rules) : java.util.Collections.emptyList();
+        List<Ball> liftedBalls = _tube.isSelected() ? _tube.peekSequence(_rules) : java.util.Collections.emptyList();
 
         for (int i = 0; i < balls.size(); i++) {
             Ball ball = balls.get(i);
 
             BallWidget widget = new BallWidget(ball);
-            if (_isSelected && liftedBalls.contains(ball)) {
+            if (_tube.isSelected() && liftedBalls.contains(ball)) {
                 widget.setLifted(true);
             }
 

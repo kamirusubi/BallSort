@@ -3,31 +3,43 @@ package model;
 import rules.SequenceRule;
 import java.util.*;
 
-public class Level {
+public class Level implements TubeSelectionListener {
 
     private final List<Tube> _tubes = new ArrayList<>();
-    private final Map<Tube, List<Ball>> _initialLevelState = new HashMap<>();
+    private final List<Tube> _originalTubes;
+    private Tube _selectedTube = null;
+    private final List<TubeSelectionListener> _levelListeners = new ArrayList<>();
 
     public Level(List<Tube> tubes) {
+        _originalTubes = tubes;
+
         for (Tube tube : tubes) {
-            Tube tubeCopy = new Tube(tube.getCapacity());
+            _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls())));
+        }
 
-            tubeCopy.pushSequence(new ArrayList<>(tube.getBalls()));
+        for (Tube tube : _tubes) {
+            tube.addSelectionListener(this);
+        }
+    }
 
-            _tubes.add(tubeCopy);
-            _initialLevelState.put(tubeCopy, tube.getBalls());
+    public void reset() {
+        _tubes.clear();
+        for (Tube tube : _originalTubes) {
+            _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls())));
+        }
+
+        for (Tube newTube : _tubes) {
+            newTube.addSelectionListener(this);
+        }
+
+        if (_selectedTube != null) {
+            _selectedTube.setSelected(false);
+            _selectedTube = null;
         }
     }
 
     public List<Tube> getTubes() {
         return Collections.unmodifiableList(_tubes);
-    }
-
-    public void reset() {
-        for (Tube tube : _tubes) {
-            List<Ball> initialBalls = _initialLevelState.get(tube);
-            tube.fill(initialBalls != null ? new ArrayList<>(initialBalls) : new ArrayList<>());
-        }
     }
 
     public boolean executeMove(Tube from, Tube to, SequenceRule rules) {
@@ -76,4 +88,66 @@ public class Level {
         return true;
     }
 
+    @Override
+    public void onTubeSelected(Tube tube) {
+        handleTubeSelection(tube);
+    }
+
+    @Override
+    public void onTubeDeselected(Tube tube) {
+        if (_selectedTube == tube) {
+            _selectedTube = null;
+        }
+        notifyTubeDeselected(tube);
+    }
+
+    @Override
+    public void onTwoTubesSelected(Tube from, Tube to) {
+        // Не используется в Level
+    }
+
+    private void handleTubeSelection(Tube tube) {
+        if (_selectedTube == null) { // Если выбирается первая труба
+            if (!tube.isEmpty()) {
+                _selectedTube = tube;
+                notifyTubeSelected(tube);
+            } else { // нельзя выбрать пустую
+                tube.setSelected(false);
+            }
+        } else { // выбирается вторая труба
+            if (_selectedTube == tube) { // если выбрана первая, то снимаем выделение
+                _selectedTube.setSelected(false);
+                _selectedTube = null;
+            } else { // если отличается от первой
+                notifyMoveAttempt(_selectedTube, tube);
+                _selectedTube = null;
+            }
+        }
+    }
+
+    public void addLevelListener(TubeSelectionListener listener) {
+        _levelListeners.add(listener);
+    }
+
+    public void removeLevelListener(TubeSelectionListener listener) {
+        _levelListeners.remove(listener);
+    }
+
+    private void notifyMoveAttempt(Tube from, Tube to) {
+        for (TubeSelectionListener listener : _levelListeners) {
+            listener.onTwoTubesSelected(from, to);
+        }
+    }
+
+    private void notifyTubeSelected(Tube tube) {
+        for (TubeSelectionListener listener : _levelListeners) {
+            listener.onTubeSelected(tube);
+        }
+    }
+
+    private void notifyTubeDeselected(Tube tube) {
+        for (TubeSelectionListener listener : _levelListeners) {
+            listener.onTubeDeselected(tube);
+        }
+    }
 }
