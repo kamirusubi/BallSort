@@ -8,7 +8,7 @@ public class Level implements TubeSelectionListener {
     private final List<Tube> _tubes = new ArrayList<>();
     private final List<Tube> _originalTubes;
     private Tube _selectedTube = null;
-    private final List<TubeSelectionListener> _levelListeners = new ArrayList<>();
+    private final List<TubeSelectionListener> _tubeSelectionListeners = new ArrayList<>();
 
     public Level(List<Tube> tubes) {
         _originalTubes = tubes;
@@ -69,12 +69,12 @@ public class Level implements TubeSelectionListener {
         return true;
     }
 
-    public void addLevelListener(TubeSelectionListener listener) {
-        _levelListeners.add(listener);
+    public void addTubeSelectionListener(TubeSelectionListener listener) {
+        _tubeSelectionListeners.add(listener);
     }
 
-    public void removeLevelListener(TubeSelectionListener listener) {
-        _levelListeners.remove(listener);
+    public void removeTubeSelectionListener(TubeSelectionListener listener) {
+        _tubeSelectionListeners.remove(listener);
     }
 
     private boolean isTubeUniform(Tube tube, SequenceRule rules) {
@@ -115,19 +115,19 @@ public class Level implements TubeSelectionListener {
     }
 
     private void notifyMoveAttempt(Tube from, Tube to) {
-        for (TubeSelectionListener listener : _levelListeners) {
+        for (TubeSelectionListener listener : _tubeSelectionListeners) {
             listener.onTwoTubesSelected(from, to);
         }
     }
 
     private void notifyFirstTubeSelected(Tube tube) {
-        for (TubeSelectionListener listener : _levelListeners) {
+        for (TubeSelectionListener listener : _tubeSelectionListeners) {
             listener.onFirstTubeSelected(tube);
         }
     }
 
     private void notifyFirstTubeDeselected(Tube tube) {
-        for (TubeSelectionListener listener : _levelListeners) {
+        for (TubeSelectionListener listener : _tubeSelectionListeners) {
             listener.onFirstTubeDeselected(tube);
         }
     }

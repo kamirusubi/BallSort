@@ -12,17 +12,17 @@ public class Game {
     private Level _level;
     private final CompositeSequenceRule _rules = new CompositeSequenceRule(new ColorSequenceRule());
     private boolean _isGameFinished = false;
-    private final List<GameMoveListener> _moveListeners = new ArrayList<>();
+    private final List<GameListener> _moveListeners = new ArrayList<>();
 
     public SequenceRule getRules() {
         return _rules;
     }
 
-    public void addMoveListener(GameMoveListener listener) {
+    public void addMoveListener(GameListener listener) {
         _moveListeners.add(listener);
     }
 
-    public void removeMoveListener(GameMoveListener listener) {
+    public void removeMoveListener(GameListener listener) {
         _moveListeners.remove(listener);
     }
 
@@ -94,13 +94,13 @@ public class Game {
     }
 
     private void notifyMoveAttempt(boolean success, Tube from, Tube to) {
-        for (GameMoveListener listener : _moveListeners) {
+        for (GameListener listener : _moveListeners) {
             listener.onMoveAttempt(success, from, to);
         }
     }
 
     private void notifyGameCompleted() {
-        for (GameMoveListener listener : _moveListeners) {
+        for (GameListener listener : _moveListeners) {
             listener.onGameCompleted();
         }
     }

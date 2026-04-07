@@ -1,9 +1,9 @@
 package view;
 
+import game.GameListener;
 import model.Level;
 import model.Tube;
 import game.Game;
-import game.GameMoveListener;
 import model.TubeSelectionListener;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LevelView extends JPanel implements TubeSelectionListener, GameMoveListener {
+public class LevelView extends JPanel implements TubeSelectionListener, GameListener {
 
     private static final int TUBES_PER_ROW = 3;
 
@@ -32,7 +32,7 @@ public class LevelView extends JPanel implements TubeSelectionListener, GameMove
         _game = game;
         _level = level;
 
-        _level.addLevelListener(this);
+        _level.addTubeSelectionListener(this);
         _game.addMoveListener(this);
 
         setLayout(new GridBagLayout());
@@ -45,9 +45,9 @@ public class LevelView extends JPanel implements TubeSelectionListener, GameMove
     }
 
     public void updateLevel(Level newLevel) {
-        _level.removeLevelListener(this);
+        _level.removeTubeSelectionListener(this);
         _level = newLevel;
-        _level.addLevelListener(this);
+        _level.addTubeSelectionListener(this);
         _tubeWidgets.clear();
         removeAll();
         rebuild();
