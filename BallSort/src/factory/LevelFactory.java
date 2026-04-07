@@ -57,14 +57,14 @@ public class LevelFactory {
     }
 
     public static Level createLevel3() {
-        int capacity = 4;
+        int capacity = 3;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.RED, Color.YELLOW));
-        tubes.add(createTube(capacity, Color.GREEN, Color.BLUE, Color.GREEN, Color.YELLOW));
-        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW));
-        tubes.add(createTube(capacity)); // пустая
-        tubes.add(createTube(capacity)); // пустая
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.GREEN, Color.GREEN, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN));
+        tubes.add(createTube(capacity, Color.RED, Color.YELLOW));
+        tubes.add(createTube(capacity, Color.BLUE));
 
         return new Level(tubes);
     }
