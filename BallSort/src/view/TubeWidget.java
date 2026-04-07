@@ -82,22 +82,16 @@ public class TubeWidget extends JPanel {
 
         for (int i = 0; i < balls.size(); i++) {
             Ball ball = balls.get(i);
-            ColorProperty colorProp = ball.getProperty(ColorProperty.class);
-            Color colorType = colorProp != null ? colorProp.getColor() : null;
-            Color ballColor = colorType != null ? colorType : Color.GRAY;
 
-            int y = startY - (i + 1) * BALL_DIAMETER;
-
+            BallWidget widget = new BallWidget(ball);
             if (_isSelected && liftedBalls.contains(ball)) {
-                y -= 10;
+                widget.setLifted(true);
             }
 
-            int x = (TUBE_WIDTH - BALL_DIAMETER) / 2;
+            int y = startY - (i + 1) * BallWidget.BALL_DIAMETER;
+            int x = (TUBE_WIDTH - BallWidget.BALL_DIAMETER) / 2;
 
-            g.setColor(ballColor);
-            g.fillOval(x, y, BALL_DIAMETER, BALL_DIAMETER);
-            g.setColor(Color.BLACK);
-            g.drawOval(x, y, BALL_DIAMETER, BALL_DIAMETER);
+            widget.draw(g, x, y);
         }
     }
 }
