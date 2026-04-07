@@ -18,11 +18,11 @@ public class Game {
         return _rules;
     }
 
-    public void addMoveListener(GameListener listener) {
+    public void addGameListener(GameListener listener) {
         _moveListeners.add(listener);
     }
 
-    public void removeMoveListener(GameListener listener) {
+    public void removeGameListener(GameListener listener) {
         _moveListeners.remove(listener);
     }
 

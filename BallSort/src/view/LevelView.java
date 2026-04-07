@@ -33,7 +33,7 @@ public class LevelView extends JPanel implements TubeSelectionListener, GameList
         _level = level;
 
         _level.addTubeSelectionListener(this);
-        _game.addMoveListener(this);
+        _game.addGameListener(this);
 
         setLayout(new GridBagLayout());
 
