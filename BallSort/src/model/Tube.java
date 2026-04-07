@@ -130,8 +130,10 @@ public class Tube {
     }
 
     public void setSelected(boolean selected) {
-        _isSelected = selected;
-        notifySelectionChanged();
+        if (_isSelected != selected) {
+            _isSelected = selected;
+            notifySelectionChanged();
+        }
     }
 
     public void addSelectionListener(TubeSelectionListener listener) {

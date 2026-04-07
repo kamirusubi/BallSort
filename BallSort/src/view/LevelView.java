@@ -87,28 +87,25 @@ public class LevelView extends JPanel implements TubeSelectionListener {
 
     @Override
     public void onTwoTubesSelected(Tube from, Tube to) {
-        if (_game.tryMove(from, to)) { //Успешный ход
-            repaint();
-
-            // Убеждаемся, что выделение снято со всех труб
+        if (_game.tryMove(from, to)) {
             for (TubeWidget widget : _tubeWidgets.values()) {
-                if (widget.getTube().isSelected()) {
-                    widget.getTube().setSelected(false);
-                }
+                widget.getTube().setSelected(false);
             }
+            repaint();
 
             if (_game.isLevelCompleted()) {
                 JOptionPane.showMessageDialog(this, "Победа!");
             }
         } else {
+            from.setSelected(false);
+            to.setSelected(false);
+
             TubeWidget errorWidget = _tubeWidgets.get(to);
             if (errorWidget != null) {
                 errorWidget.setError();
                 _errorWidget = errorWidget;
                 _errorTimer.start();
             }
-
-            from.setSelected(true);
         }
     }
 

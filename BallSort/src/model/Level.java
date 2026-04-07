@@ -120,7 +120,6 @@ public class Level implements TubeSelectionListener {
                 _selectedTube = null;
             } else { // если отличается от первой
                 notifyMoveAttempt(_selectedTube, tube);
-                _selectedTube = null;
             }
         }
     }
