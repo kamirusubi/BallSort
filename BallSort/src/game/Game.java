@@ -11,7 +11,6 @@ import java.util.*;
 public class Game {
     private Level _level;
     private final CompositeSequenceRule _rules = new CompositeSequenceRule(new ColorSequenceRule());
-    private boolean _isGameFinished = false;
     private final List<GameListener> _moveListeners = new ArrayList<>();
 
     public SequenceRule getRules() {
@@ -28,12 +27,10 @@ public class Game {
 
     public void start() {
         _level = LevelFactory.getRandomLevel();
-        _isGameFinished = false;
     }
 
     public void startForTests() {
         _level = LevelFactory.createSimpleLevel();
-        _isGameFinished = false;
     }
 
     public boolean tryMove(Tube from, Tube to) {
@@ -51,7 +48,6 @@ public class Game {
         }
 
         if (isLevelCompleted()) {
-            _isGameFinished = true;
             notifyGameCompleted();
         }
 
@@ -89,7 +85,6 @@ public class Game {
     public void reset() {
         if (_level != null) {
             _level.reset();
-            _isGameFinished = false;
         }
     }
 
