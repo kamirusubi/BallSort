@@ -1,5 +1,3 @@
-package tests;
-
 import game.Game;
 import model.Level;
 import model.Tube;

@@ -1,6 +1,7 @@
 package game;
 
 import model.*;
+import rules.ChargeSequenceRule;
 import rules.CompositeSequenceRule;
 import rules.ColorSequenceRule;
 import factory.LevelFactory;
@@ -10,7 +11,7 @@ import java.util.*;
 
 public class Game {
     private Level _level;
-    private final CompositeSequenceRule _rules = new CompositeSequenceRule(new ColorSequenceRule());
+    private final CompositeSequenceRule _rules = new CompositeSequenceRule(new ColorSequenceRule(), new ChargeSequenceRule());
     private final List<GameListener> _moveListeners = new ArrayList<>();
 
     public SequenceRule getRules() {

@@ -6,14 +6,24 @@ import java.util.*;
 
 public class LevelFactory {
 
-    private static Tube createTube(int capacity, Color... colors) {
+    private static Tube createTube(int capacity, Object... ballSpecs) {
         Tube tube = new Tube(capacity);
         List<Ball> balls = new ArrayList<>();
-        for (Color color : colors) {
-            balls.add(new Ball(new ColorProperty(color)));
+
+        for (Object spec : ballSpecs) {
+            if (spec instanceof Ball) {
+                balls.add((Ball) spec);
+            } else if (spec instanceof Color) {
+                balls.add(new Ball(new ColorProperty((Color) spec)));
+            }
         }
+
         tube.pushSequence(balls);
         return tube;
+    }
+
+    private static Ball createBall(Color color, Charge charge) {
+        return new Ball(new ColorProperty(color), new ChargeProperty(charge));
     }
 
     // Уровень для тестов
@@ -82,67 +92,36 @@ public class LevelFactory {
         return new Level(tubes);
     }
 
-    public static Level createLevel5() {
+    public static Level createLevelWithCharges() {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
 
-        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.RED, Color.BLUE));
-        tubes.add(createTube(capacity, Color.BLUE, Color.BLUE, Color.GREEN, Color.GREEN));
-        tubes.add(createTube(capacity, Color.GREEN, Color.YELLOW, Color.YELLOW, Color.YELLOW));
-        tubes.add(createTube(capacity, Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW));
-        tubes.add(createTube(capacity)); // пустая
-        tubes.add(createTube(capacity)); // пустая
+        Ball redPositive = createBall(Color.RED, Charge.POSITIVE);
+        Ball redNegative = createBall(Color.RED, Charge.NEGATIVE);
+        Ball bluePositive = createBall(Color.BLUE, Charge.POSITIVE);
+        Ball blueNegative = createBall(Color.BLUE, Charge.NEGATIVE);
+        Ball greenPositive = createBall(Color.GREEN, Charge.POSITIVE);
+        Ball greenNegative = createBall(Color.GREEN, Charge.NEGATIVE);
+        Ball yellowPositive = createBall(Color.YELLOW, Charge.POSITIVE);
+        Ball yellowNegative = createBall(Color.YELLOW, Charge.NEGATIVE);
 
-        return new Level(tubes);
-    }
+        tubes.add(createTube(capacity, redPositive, redNegative, Color.RED, redPositive));
 
-    public static Level createLevel6() {
-        int capacity = 4;
-        List<Tube> tubes = new ArrayList<>();
+        tubes.add(createTube(capacity, bluePositive, blueNegative, Color.BLUE, greenPositive));
 
-        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.RED, Color.RED));
-        tubes.add(createTube(capacity, Color.BLUE, Color.BLUE, Color.BLUE, Color.BLUE));
-        tubes.add(createTube(capacity, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN));
-        tubes.add(createTube(capacity, Color.YELLOW, Color.YELLOW, Color.YELLOW, Color.YELLOW));
-        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW));
-        tubes.add(createTube(capacity)); // пустая
-        tubes.add(createTube(capacity)); // пустая
+        tubes.add(createTube(capacity, greenPositive, greenNegative, Color.GREEN, bluePositive));
 
-        return new Level(tubes);
-    }
+        tubes.add(createTube(capacity, yellowPositive, yellowNegative, Color.YELLOW, yellowPositive));
 
-    public static Level createLevel7() {
-        int capacity = 4;
-        List<Tube> tubes = new ArrayList<>();
-
-        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW));
-        tubes.add(createTube(capacity, Color.RED, Color.BLUE, Color.GREEN, Color.ORANGE));
-        tubes.add(createTube(capacity, Color.RED, Color.YELLOW, Color.ORANGE, Color.BLUE));
-        tubes.add(createTube(capacity, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED));
-        tubes.add(createTube(capacity, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE));
-        tubes.add(createTube(capacity)); // пустая
-
-        return new Level(tubes);
-    }
-
-    public static Level createLevel8() {
-        int capacity = 5;
-        List<Tube> tubes = new ArrayList<>();
-
-        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.BLUE, Color.BLUE, Color.RED));
-        tubes.add(createTube(capacity, Color.GREEN, Color.GREEN, Color.YELLOW, Color.YELLOW, Color.BLUE));
-        tubes.add(createTube(capacity, Color.ORANGE, Color.ORANGE, Color.RED, Color.BLUE, Color.YELLOW));
-        tubes.add(createTube(capacity, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.RED, Color.ORANGE));
-        tubes.add(createTube(capacity, Color.BLUE, Color.GREEN, Color.YELLOW, Color.ORANGE, Color.GREEN));
-        tubes.add(createTube(capacity)); // пустая
-        tubes.add(createTube(capacity)); // пустая
+        tubes.add(createTube(capacity));
+        tubes.add(createTube(capacity));
 
         return new Level(tubes);
     }
 
     public static Level getRandomLevel() {
         Random random = new Random();
-        int levelNumber = random.nextInt(8) + 1;
+        int levelNumber = random.nextInt(5) + 1;
         return getLevel(levelNumber);
     }
 
@@ -157,13 +136,7 @@ public class LevelFactory {
             case 4:
                 return createLevel4();
             case 5:
-                return createLevel5();
-            case 6:
-                return createLevel6();
-            case 7:
-                return createLevel7();
-            case 8:
-                return createLevel8();
+                return createLevelWithCharges();
             default:
                 throw new IllegalArgumentException("Неверный номер уровня: " + levelNumber);
         }
@@ -175,10 +148,7 @@ public class LevelFactory {
         levels.add(createLevel2());
         levels.add(createLevel3());
         levels.add(createLevel4());
-        levels.add(createLevel5());
-        levels.add(createLevel6());
-        levels.add(createLevel7());
-        levels.add(createLevel8());
+        levels.add(createLevelWithCharges());
         return levels;
     }
 }

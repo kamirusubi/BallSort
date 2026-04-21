@@ -1,5 +1,3 @@
-package tests;
-
 import model.Ball;
 import model.ColorProperty;
 import model.Tube;

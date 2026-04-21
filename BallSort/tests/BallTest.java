@@ -1,5 +1,3 @@
-package tests;
-
 import model.Ball;
 import model.BallProperty;
 import model.ColorProperty;

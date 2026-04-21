@@ -104,7 +104,8 @@ public class LevelView extends JPanel implements TubeSelectionListener, GameList
     @Override
     public void onMoveAttempt(boolean success, Tube from, Tube to) {
         if (success) {
-            repaint();
+            _tubeWidgets.get(from).repaint();
+            _tubeWidgets.get(to).repaint();
         } else {
             TubeWidget errorWidget = _tubeWidgets.get(to);
             if (errorWidget != null) {

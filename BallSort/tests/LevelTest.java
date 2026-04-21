@@ -1,4 +1,3 @@
-package tests;
 
 import factory.LevelFactory;
 import model.Ball;

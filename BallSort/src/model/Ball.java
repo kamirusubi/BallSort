@@ -29,7 +29,7 @@ public class Ball {
 
     @Override
     public String toString() {
-        ColorProperty colorProp = getProperty(ColorProperty.class);
-        return colorProp != null ? colorProp.getColor().toString() : "?";
+        ChargeProperty chargeProp = getProperty(ChargeProperty.class);
+        return chargeProp.toString();
     }
 }
