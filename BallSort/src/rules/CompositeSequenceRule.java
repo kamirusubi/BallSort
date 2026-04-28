@@ -15,10 +15,6 @@ public class CompositeSequenceRule implements SequenceRule {
         _rules.add(rule);
     }
 
-    public void removeRule(SequenceRule rule) {
-        _rules.remove(rule);
-    }
-
     public void clearRules() {
         _rules.clear();
     }
