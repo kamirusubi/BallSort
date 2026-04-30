@@ -17,14 +17,14 @@ class CompositeSequenceRuleTest {
     private CompositeSequenceRule rule = new CompositeSequenceRule();
 
     @Test
-    void testEmptyCompositeRuleAllowsAnyStack() {
+    void test01_emptyCompositeRuleAllowsAnyStack() {
         Ball top = new Ball(new ColorProperty(Color.RED));
         Ball bottom = new Ball(new ColorProperty(Color.BLUE));
         assertTrue(rule.canStack(top, bottom));
     }
 
     @Test
-    void testCompositeRuleWithSingleRule() {
+    void test02_compositeRuleWithSingleRule() {
         rule.addRule(new ColorSequenceRule());
         Ball top = new Ball(new ColorProperty(Color.RED));
         Ball bottom = new Ball(new ColorProperty(Color.RED));
@@ -32,7 +32,7 @@ class CompositeSequenceRuleTest {
     }
 
     @Test
-    void testCompositeRuleWithSingleRuleFails() {
+    void test03_compositeRuleWithSingleRuleFails() {
         rule.addRule(new ColorSequenceRule());
         Ball top = new Ball(new ColorProperty(Color.RED));
         Ball bottom = new Ball(new ColorProperty(Color.BLUE));
@@ -40,7 +40,7 @@ class CompositeSequenceRuleTest {
     }
 
     @Test
-    void testCompositeRuleWithMultipleRulesAllPass() {
+    void test04_compositeRuleWithMultipleRulesAllPass() {
         rule.addRule(new ColorSequenceRule());
         rule.addRule(new ChargeSequenceRule());
 
@@ -51,7 +51,7 @@ class CompositeSequenceRuleTest {
     }
 
     @Test
-    void testCompositeRuleWithMultipleRulesOneFails() {
+    void test05_compositeRuleWithMultipleRulesOneFails() {
         rule.addRule(new ColorSequenceRule());
         rule.addRule(new ChargeSequenceRule());
 
@@ -62,7 +62,7 @@ class CompositeSequenceRuleTest {
     }
 
     @Test
-    void testConstructorWithRules() {
+    void test06_constructorWithRules() {
         CompositeSequenceRule ruleWithRules = new CompositeSequenceRule(
                 new ColorSequenceRule(),
                 new ChargeSequenceRule()
@@ -75,7 +75,7 @@ class CompositeSequenceRuleTest {
     }
 
     @Test
-    void testClearRules() {
+    void test07_clearRules() {
         rule.addRule(new ColorSequenceRule());
         rule.clearRules();
 
@@ -85,7 +85,7 @@ class CompositeSequenceRuleTest {
     }
 
     @Test
-    void testGetRulesReturnsUnmodifiableList() {
+    void test08_getRulesReturnsUnmodifiableList() {
         rule.addRule(new ColorSequenceRule());
         assertThrows(UnsupportedOperationException.class, () -> rule.getRules().add(new ChargeSequenceRule()));
     }

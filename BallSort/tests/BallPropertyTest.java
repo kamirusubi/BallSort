@@ -8,32 +8,32 @@ abstract class BallPropertyTest<T extends BallProperty> {
     protected abstract T createDifferentInstance();
 
     @Test
-    void testEqualsSameInstance() {
+    void test01_equalsSameInstance() {
         T instance = createInstance();
         assertEquals(instance, instance);
     }
 
     @Test
-    void testEqualsNull() {
+    void test02_equalsNull() {
         T instance = createInstance();
         assertNotEquals(null, instance);
     }
 
     @Test
-    void testEqualsDifferentClass() {
+    void test03_equalsDifferentClass() {
         T instance = createInstance();
         assertNotEquals(instance, "string");
     }
 
     @Test
-    void testEqualsIdenticalProperties() {
+    void test04_equalsIdenticalProperties() {
         T instance1 = createInstance();
         T instance2 = createInstance();
         assertEquals(instance1, instance2);
     }
 
     @Test
-    void testEqualsDifferentProperties() {
+    void test05_equalsDifferentProperties() {
         T instance1 = createInstance();
         T instance2 = createDifferentInstance();
         assertNotEquals(instance1, instance2);

@@ -17,13 +17,13 @@ class ChargePropertyTest extends BallPropertyTest<ChargeProperty> {
     }
 
     @Test
-    void testGetCharge() {
+    void test_getCharge() {
         ChargeProperty property = new ChargeProperty(Charge.NEUTRAL);
         assertEquals(Charge.NEUTRAL, property.getCharge());
     }
 
     @Test
-    void testToString() {
+    void test_toString() {
         ChargeProperty positive = new ChargeProperty(Charge.POSITIVE);
         assertEquals("+", positive.toString());
 

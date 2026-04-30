@@ -18,13 +18,13 @@ class ColorPropertyTest extends BallPropertyTest<ColorProperty> {
     }
 
     @Test
-    void testGetColor() {
+    void test_getColor() {
         ColorProperty property = new ColorProperty(Color.GREEN);
         assertEquals(Color.GREEN, property.getColor());
     }
 
     @Test
-    void testToString() {
+    void test_toString() {
         ColorProperty property = new ColorProperty(Color.RED);
         assertNotNull(property.toString());
     }
