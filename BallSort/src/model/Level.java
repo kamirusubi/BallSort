@@ -1,6 +1,7 @@
 package model;
 
 import rules.*;
+import view.TubeWidget;
 
 import java.util.*;
 
@@ -50,18 +51,11 @@ public class Level implements TubeSelectionListener {
     }
 
     public boolean executeMove(Tube from, Tube to) {
-        if (from.isEmpty() || !to.hasSpace()) {
-            return false;
-        }
-
+        if (from.isEmpty() || !to.hasSpace()) return false;
         if (!_tubes.contains(from) || !_tubes.contains(to)) return false;
-
-        if(!_rules.canStack(from.peekOne(), to.peekOne())){
-            return false;
-        }
+        if(!_rules.canStack(from.peekOne(), to.peekOne())) return false;
 
         List<Ball> ballsToMove = from.peekSequence(_rules);
-
         for (Ball ball : ballsToMove) {
             if(to.hasSpace()){
                 to.pushOne(from.popOne());
@@ -91,19 +85,12 @@ public class Level implements TubeSelectionListener {
     }
 
     private boolean isTubeUniform(Tube tube, SequenceRule rules) {
-        if (tube.isEmpty() || tube.getBallCount() == 1) {
-            return true;
-        }
+        if (tube.isEmpty() || tube.getBallCount() == 1) return true;
 
         List<Ball> balls = tube.getBalls();
 
         for (int i = 0; i < balls.size() - 1; i++) {
-            Ball currentBall = balls.get(i);
-            Ball nextBall = balls.get(i + 1);
-
-            if (!rules.canStack(nextBall, currentBall)) {
-                return false;
-            }
+            if (!rules.canStack(balls.get(i + 1), balls.get(i))) return false;
         }
 
         return true;
@@ -146,15 +133,13 @@ public class Level implements TubeSelectionListener {
     }
 
     @Override
-    public void onFirstTubeSelected(Tube tube) {
-        handleTubeSelection(tube);
+    public void onFirstTubeSelected(Tube selectedTube) {
+        handleTubeSelection(selectedTube);
     }
 
     @Override
     public void onFirstTubeDeselected(Tube tube) {
-        if (_selectedTube == tube) {
-            _selectedTube = null;
-        }
+        _selectedTube = null;
         notifyFirstTubeDeselected(tube);
     }
 

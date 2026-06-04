@@ -68,14 +68,14 @@ class TubeSelectionListenerTest {
     }
 
     @Test
-    void test04_selectingSameTubeTwiceDoesNotDeselect() {
+    void test04_selectingSameTubeTwiceDoesDeselect() {
         Tube tube = level.getTubes().get(0);
 
         tube.setSelected(true);
         tube.setSelected(true);
 
         assertEquals(1, listener.firstTubeSelectedCount);
-        assertEquals(0, listener.firstTubeDeselectedCount);
+        assertEquals(1, listener.firstTubeDeselectedCount);
         assertEquals(0, listener.twoTubesSelectedCount);
     }
 

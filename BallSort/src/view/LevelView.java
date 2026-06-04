@@ -82,11 +82,6 @@ public class LevelView extends JPanel implements TubeSelectionListener, GameList
 
     @Override
     public void onFirstTubeSelected(Tube tube) {
-        for (TubeWidget widget : _tubeWidgets.values()) {
-            if (widget.getTube() != tube) {
-                widget.getTube().setSelected(false);
-            }
-        }
         updateTubeVisual(tube);
     }
 

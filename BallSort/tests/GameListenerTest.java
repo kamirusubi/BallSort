@@ -195,10 +195,8 @@ class GameListenerTest {
         assertTrue(listener.isMoveAttemptCalled());
 
         if (listener.lastMoveSuccess) {
-            assertNotEquals(fromCountBefore, from.getBallCount(),
-                    "Состояние from должно измениться после события");
-            assertNotEquals(toCountBefore, to.getBallCount(),
-                    "Состояние to должно измениться после события");
+            assertNotEquals(fromCountBefore, from.getBallCount());
+            assertNotEquals(toCountBefore, to.getBallCount());
         }
 
         assertEquals(completedBefore, game.isLevelCompleted() || completedBefore);
@@ -209,21 +207,17 @@ class GameListenerTest {
         List<Tube> tubes = level.getTubes();
 
         game.tryMove(tubes.get(0), tubes.get(3));
-        System.out.println(listener.callHistory);
 
         assertEquals(0, listener.gameCompletedCount);
         assertFalse(game.isLevelCompleted());
 
         game.tryMove(tubes.get(2), tubes.get(1));
-        System.out.println(listener.callHistory);
 
         assertTrue(game.isLevelCompleted());
         assertEquals(1, listener.gameCompletedCount);
 
         List<String> history = listener.callHistory;
         int lastIndex = history.size() - 1;
-
-        System.out.println(listener.callHistory);
 
         assertEquals("onGameCompleted", history.get(lastIndex));
 

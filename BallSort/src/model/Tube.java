@@ -79,10 +79,8 @@ public class Tube {
     }
 
     public void setSelected(boolean selected) {
-        if (_isSelected != selected) {
-            _isSelected = selected;
-            notifySelectionChanged();
-        }
+        _isSelected = selected;
+        notifySelectionChanged();
     }
 
     public boolean hasSpace() {
@@ -120,11 +118,8 @@ public class Tube {
 
     private void notifySelectionChanged() {
         for (TubeSelectionListener listener : _listeners) {
-            if (_isSelected) {
-                listener.onFirstTubeSelected(this);
-            } else {
-                listener.onFirstTubeDeselected(this);
-            }
+            if (_isSelected) listener.onFirstTubeSelected(this);
+            else listener.onFirstTubeDeselected(this);
         }
     }
 

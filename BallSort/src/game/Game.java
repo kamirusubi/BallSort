@@ -25,18 +25,15 @@ public class Game {
         from.setSelected(false);
         to.setSelected(false);
 
-        if (!_level.executeMove(from, to)) {
-            notifyMoveAttempt(false, from, to);
-            return false;
-        }
+        boolean success = _level.executeMove(from, to);
 
-        notifyMoveAttempt(true, from, to);
+        notifyMoveAttempt(success, from, to);
 
-        if (isLevelCompleted()) {
+        if (success && isLevelCompleted()) {
             notifyGameCompleted();
         }
 
-        return true;
+        return success;
     }
 
     public boolean isLevelCompleted() {
