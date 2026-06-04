@@ -1,8 +1,7 @@
 package model;
 
-import java.util.Objects;
+public class ChargeProperty extends BallProperty {
 
-public class ChargeProperty implements BallProperty {
     private final Charge _charge;
 
     public ChargeProperty(Charge charge) {
@@ -14,15 +13,13 @@ public class ChargeProperty implements BallProperty {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        ChargeProperty other = (ChargeProperty) obj;
-        return _charge == other._charge;
+    public String toString() {
+        return _charge.toString();
     }
 
     @Override
-    public String toString() {
-        return _charge.toString();
+    protected boolean equalsSpecific(BallProperty other) {
+        ChargeProperty that = (ChargeProperty) other;
+        return this._charge == that._charge;
     }
 }
