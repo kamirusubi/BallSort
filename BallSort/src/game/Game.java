@@ -25,11 +25,6 @@ public class Game {
         from.setSelected(false);
         to.setSelected(false);
 
-        if (!validateMove(from, to)) {
-            notifyMoveAttempt(false, from, to);
-            return false;
-        }
-
         if (!_level.executeMove(from, to)) {
             notifyMoveAttempt(false, from, to);
             return false;
@@ -42,15 +37,6 @@ public class Game {
         }
 
         return true;
-    }
-
-    public boolean validateMove(Tube from, Tube to) {
-        List<Tube> levelTubes = _level.getTubes();
-        if (!levelTubes.contains(from) || !levelTubes.contains(to)) return false;
-        if (from == null || from.isEmpty()) return false;
-        if (to == null || !to.hasSpace()) return false;
-
-        return _level.getRules().canStack(from.peekOne(), to.peekOne());
     }
 
     public boolean isLevelCompleted() {
@@ -69,10 +55,6 @@ public class Game {
 
     public void addGameListener(GameListener listener) {
         _moveListeners.add(listener);
-    }
-
-    public void removeGameListener(GameListener listener) {
-        _moveListeners.remove(listener);
     }
 
     private void notifyMoveAttempt(boolean success, Tube from, Tube to) {

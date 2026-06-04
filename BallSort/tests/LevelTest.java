@@ -111,13 +111,13 @@ class LevelTest {
         Tube anotherTo = tubes.get(1);
         level.executeMove(anotherTo, to);
 
-        assertTrue(to.isFull());
+        assertTrue(!to.hasSpace());
 
         boolean result = level.executeMove(to, to);
 
         assertFalse(result);
         assertEquals(to.getBallCount(), to.getBallCount());
-        assertTrue(to.isFull());
+        assertTrue(!to.hasSpace());
     }
 
     @Test

@@ -24,7 +24,6 @@ class TubeTest {
         assertEquals(4, tube.getCapacity());
         assertEquals(0, tube.getBallCount());
         assertTrue(tube.isEmpty());
-        assertFalse(tube.isFull());
         assertTrue(tube.hasSpace());
     }
 
@@ -41,7 +40,6 @@ class TubeTest {
         assertEquals(4, tube.getCapacity());
         assertEquals(4, tube.getBallCount());
         assertFalse(tube.isEmpty());
-        assertTrue(tube.isFull());
         assertFalse(tube.hasSpace());
     }
 
@@ -58,14 +56,12 @@ class TubeTest {
     }
 
     @Test
-    void test04_FillEmptyTube() {
-        Tube tube = new Tube(4);
-
+    void test04_CreateTubeWithBallsUsingConstructor() {
         List<Ball> balls = new ArrayList<>();
         balls.add(new Ball(new ColorProperty(Color.RED)));
         balls.add(new Ball(new ColorProperty(Color.RED)));
 
-        tube.fill(balls);
+        Tube tube = new Tube(4, balls);
 
         assertEquals(2, tube.getBallCount());
         assertEquals(Color.RED, tube.getBalls().get(0).getProperty(ColorProperty.class).getColor());
@@ -73,26 +69,7 @@ class TubeTest {
     }
 
     @Test
-    void test05_FillOverwriteExistingBalls() {
-        Tube tube = new Tube(4);
-
-        List<Ball> firstBalls = new ArrayList<>();
-        firstBalls.add(new Ball(new ColorProperty(Color.RED)));
-        tube.fill(firstBalls);
-        assertEquals(1, tube.getBallCount());
-
-        List<Ball> secondBalls = new ArrayList<>();
-        secondBalls.add(new Ball(new ColorProperty(Color.BLUE)));
-        secondBalls.add(new Ball(new ColorProperty(Color.BLUE)));
-        tube.fill(secondBalls);
-
-        assertEquals(2, tube.getBallCount());
-        assertEquals(Color.BLUE, tube.getBalls().get(0).getProperty(ColorProperty.class).getColor());
-        assertEquals(Color.BLUE, tube.getBalls().get(1).getProperty(ColorProperty.class).getColor());
-    }
-
-    @Test
-    void test06_PeekOneOnEmptyTube() {
+    void test05_PeekOneOnEmptyTube() {
         Tube tube = new Tube(4);
 
         Ball ball = tube.peekOne();
@@ -101,12 +78,11 @@ class TubeTest {
     }
 
     @Test
-    void test07_PeekOneOnNonEmptyTube() {
-        Tube tube = new Tube(4);
+    void test06_PeekOneOnNonEmptyTube() {
         List<Ball> balls = new ArrayList<>();
         Ball redBall = new Ball(new ColorProperty(Color.RED));
         balls.add(redBall);
-        tube.fill(balls);
+        Tube tube = new Tube(4, balls);
 
         Ball ball = tube.peekOne();
 
@@ -116,14 +92,13 @@ class TubeTest {
     }
 
     @Test
-    void test08_PeekSequenceWithConsecutiveMatchingBalls() {
-        Tube tube = new Tube(4);
+    void test07_PeekSequenceWithConsecutiveMatchingBalls() {
         List<Ball> balls = new ArrayList<>();
         balls.add(new Ball(new ColorProperty(Color.BLUE)));
         balls.add(new Ball(new ColorProperty(Color.RED)));
         balls.add(new Ball(new ColorProperty(Color.RED)));
         balls.add(new Ball(new ColorProperty(Color.RED)));
-        tube.fill(balls);
+        Tube tube = new Tube(4, balls);
 
         List<Ball> sequence = tube.peekSequence(rule);
 
@@ -135,14 +110,13 @@ class TubeTest {
     }
 
     @Test
-    void test09_PeekSequenceWithNonConsecutiveBalls() {
-        Tube tube = new Tube(4);
+    void test08_PeekSequenceWithNonConsecutiveBalls() {
         List<Ball> balls = new ArrayList<>();
         balls.add(new Ball(new ColorProperty(Color.RED)));
         balls.add(new Ball(new ColorProperty(Color.RED)));
         balls.add(new Ball(new ColorProperty(Color.BLUE)));
         balls.add(new Ball(new ColorProperty(Color.RED)));
-        tube.fill(balls);
+        Tube tube = new Tube(4, balls);
 
         List<Ball> sequence = tube.peekSequence(rule);
 
@@ -152,7 +126,7 @@ class TubeTest {
     }
 
     @Test
-    void test10_PopOneOnEmptyTube() {
+    void test09_PopOneOnEmptyTube() {
         Tube tube = new Tube(4);
 
         Ball ball = tube.popOne();
@@ -162,12 +136,11 @@ class TubeTest {
     }
 
     @Test
-    void test11_PopOneOnNonEmptyTube() {
-        Tube tube = new Tube(4);
+    void test10_PopOneOnNonEmptyTube() {
         List<Ball> balls = new ArrayList<>();
         Ball redBall = new Ball(new ColorProperty(Color.RED));
         balls.add(redBall);
-        tube.fill(balls);
+        Tube tube = new Tube(4, balls);
 
         Ball ball = tube.popOne();
 
@@ -177,45 +150,7 @@ class TubeTest {
     }
 
     @Test
-    void test12_PopSequenceWithConsecutiveMatchingBalls() {
-        Tube tube = new Tube(4);
-        List<Ball> balls = new ArrayList<>();
-        balls.add(new Ball(new ColorProperty(Color.BLUE)));
-        balls.add(new Ball(new ColorProperty(Color.RED)));
-        balls.add(new Ball(new ColorProperty(Color.RED)));
-        balls.add(new Ball(new ColorProperty(Color.RED)));
-        tube.fill(balls);
-
-        List<Ball> sequence = tube.popSequence(rule);
-
-        assertEquals(3, sequence.size());
-        assertEquals(Color.RED, sequence.get(0).getProperty(ColorProperty.class).getColor());
-        assertEquals(Color.RED, sequence.get(1).getProperty(ColorProperty.class).getColor());
-        assertEquals(Color.RED, sequence.get(2).getProperty(ColorProperty.class).getColor());
-        assertEquals(1, tube.getBallCount());
-        assertEquals(Color.BLUE, tube.peekOne().getProperty(ColorProperty.class).getColor());
-    }
-
-    @Test
-    void test13_PopSequenceWithNonConsecutiveBalls() {
-        Tube tube = new Tube(4);
-        List<Ball> balls = new ArrayList<>();
-        balls.add(new Ball(new ColorProperty(Color.RED)));
-        balls.add(new Ball(new ColorProperty(Color.RED)));
-        balls.add(new Ball(new ColorProperty(Color.BLUE)));
-        balls.add(new Ball(new ColorProperty(Color.RED)));
-        tube.fill(balls);
-
-        List<Ball> sequence = tube.popSequence(rule);
-
-        assertEquals(1, sequence.size());
-        assertEquals(Color.RED, sequence.get(0).getProperty(ColorProperty.class).getColor());
-        assertEquals(3, tube.getBallCount());
-        assertEquals(Color.BLUE, tube.peekOne().getProperty(ColorProperty.class).getColor());
-    }
-
-    @Test
-    void test14_PushOneWithSpaceAvailable() {
+    void test11_PushOneWithSpaceAvailable() {
         Tube tube = new Tube(4);
         Ball redBall = new Ball(new ColorProperty(Color.RED));
 
@@ -227,7 +162,7 @@ class TubeTest {
     }
 
     @Test
-    void test15_PushOneWithoutSpace() {
+    void test12_PushOneWithoutSpace() {
         Tube tube = new Tube(2);
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
@@ -241,7 +176,7 @@ class TubeTest {
     }
 
     @Test
-    void test16_PushSequenceWithSpaceAvailable() {
+    void test13_PushSequenceWithSpaceAvailable() {
         Tube tube = new Tube(4);
         List<Ball> balls = new ArrayList<>();
         balls.add(new Ball(new ColorProperty(Color.RED)));
@@ -256,7 +191,7 @@ class TubeTest {
     }
 
     @Test
-    void test17_PushSequenceWithoutSpace() {
+    void test14_PushSequenceWithoutSpace() {
         Tube tube = new Tube(2);
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
@@ -273,7 +208,7 @@ class TubeTest {
     }
 
     @Test
-    void test18_PushSequenceWithNotEnoughSpace() {
+    void test15_PushSequenceWithNotEnoughSpace() {
         Tube tube = new Tube(3);
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));

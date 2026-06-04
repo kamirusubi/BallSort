@@ -19,7 +19,7 @@ public class ChargeProperty extends BallProperty {
 
     @Override
     protected boolean equalsSpecific(BallProperty other) {
-        ChargeProperty that = (ChargeProperty) other;
-        return this._charge == that._charge;
+        ChargeProperty otherCharge = (ChargeProperty) other;
+        return _charge == otherCharge.getCharge();
     }
 }

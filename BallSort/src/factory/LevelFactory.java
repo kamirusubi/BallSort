@@ -10,27 +10,6 @@ import java.awt.Color;
 import java.util.*;
 
 public class LevelFactory {
-
-    private static Tube createTube(int capacity, Object... ballSpecs) {
-        Tube tube = new Tube(capacity);
-        List<Ball> balls = new ArrayList<>();
-
-        for (Object spec : ballSpecs) {
-            if (spec instanceof Ball) {
-                balls.add((Ball) spec);
-            } else if (spec instanceof Color) {
-                balls.add(new Ball(new ColorProperty((Color) spec)));
-            }
-        }
-
-        tube.pushSequence(balls);
-        return tube;
-    }
-
-    private static Ball createBall(Color color, Charge charge) {
-        return new Ball(new ColorProperty(color), new ChargeProperty(charge));
-    }
-
     // Уровень для тестов
     public static Level createSimpleLevel() {
         int capacity = 2;
@@ -103,7 +82,7 @@ public class LevelFactory {
         return getLevel(levelNumber);
     }
 
-    public static Level getLevel(int levelNumber) {
+    private static Level getLevel(int levelNumber) {
         switch (levelNumber) {
             case 1:
                 return createLevelWithColors();
@@ -116,10 +95,23 @@ public class LevelFactory {
         }
     }
 
-    public static List<Level> getAllLevels() {
-        List<Level> levels = new ArrayList<>();
-        levels.add(createLevelWithColors());
-        levels.add(createLevelWithCharges());
-        return levels;
+    private static Tube createTube(int capacity, Object... ballSpecs) {
+        Tube tube = new Tube(capacity);
+        List<Ball> balls = new ArrayList<>();
+
+        for (Object spec : ballSpecs) {
+            if (spec instanceof Ball) {
+                balls.add((Ball) spec);
+            } else if (spec instanceof Color) {
+                balls.add(new Ball(new ColorProperty((Color) spec)));
+            }
+        }
+
+        tube.pushSequence(balls);
+        return tube;
+    }
+
+    private static Ball createBall(Color color, Charge charge) {
+        return new Ball(new ColorProperty(color), new ChargeProperty(charge));
     }
 }

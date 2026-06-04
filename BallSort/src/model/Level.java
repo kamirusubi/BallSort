@@ -54,6 +54,12 @@ public class Level implements TubeSelectionListener {
             return false;
         }
 
+        if (!_tubes.contains(from) || !_tubes.contains(to)) return false;
+
+        if(!_rules.canStack(from.peekOne(), to.peekOne())){
+            return false;
+        }
+
         List<Ball> ballsToMove = from.peekSequence(_rules);
 
         for (Ball ball : ballsToMove) {
@@ -68,7 +74,7 @@ public class Level implements TubeSelectionListener {
     public boolean isLevelCompleted() {
         for (Tube tube : _tubes) {
             if (!tube.isEmpty()) {
-                if (!isTubeUniform(tube, _rules) || !tube.isFull()) {
+                if (!isTubeUniform(tube, _rules) || tube.hasSpace()) {
                     return false;
                 }
             }

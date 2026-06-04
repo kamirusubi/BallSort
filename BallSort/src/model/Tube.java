@@ -22,11 +22,6 @@ public class Tube {
         fill(initialBalls);
     }
 
-    public void fill(List<Ball> initialBalls) {
-        _balls.clear();
-        _balls.addAll(initialBalls);
-    }
-
     public Ball peekOne(){
         if (_balls.isEmpty()) {
             return null;
@@ -67,24 +62,6 @@ public class Tube {
         return _balls.remove(getBallCount()-1);
     }
 
-    public List<Ball> popSequence(SequenceRule rules) {
-        List<Ball> result = new ArrayList<>();
-
-        if (_balls.isEmpty()) {
-            return result;
-        }
-
-        Ball currentBall = popOne();
-        result.add(currentBall);
-
-        while (!_balls.isEmpty() && rules.canStack(_balls.get(getBallCount()-1), currentBall)) {
-            currentBall = popOne();
-            result.add(currentBall);
-        }
-
-        return result;
-    }
-
     public void pushOne(Ball ball) {
         if (hasSpace()) {
             _balls.add(ball);
@@ -101,16 +78,19 @@ public class Tube {
         return true;
     }
 
+    public void setSelected(boolean selected) {
+        if (_isSelected != selected) {
+            _isSelected = selected;
+            notifySelectionChanged();
+        }
+    }
+
     public boolean hasSpace() {
         return _balls.size() < _capacity;
     }
 
     public boolean isEmpty() {
         return _balls.isEmpty();
-    }
-
-    public boolean isFull() {
-        return _balls.size() >= _capacity;
     }
 
     public int getBallCount() {
@@ -129,19 +109,13 @@ public class Tube {
         return _isSelected;
     }
 
-    public void setSelected(boolean selected) {
-        if (_isSelected != selected) {
-            _isSelected = selected;
-            notifySelectionChanged();
-        }
-    }
-
     public void addSelectionListener(TubeSelectionListener listener) {
         _listeners.add(listener);
     }
 
-    public void removeSelectionListener(TubeSelectionListener listener) {
-        _listeners.remove(listener);
+    private void fill(List<Ball> initialBalls) {
+        _balls.clear();
+        _balls.addAll(initialBalls);
     }
 
     private void notifySelectionChanged() {
