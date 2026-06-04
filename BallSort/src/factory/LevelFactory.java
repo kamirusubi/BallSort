@@ -1,6 +1,11 @@
 package factory;
 
 import model.*;
+import rules.ChargeSequenceRule;
+import rules.ColorSequenceRule;
+import rules.CompositeSequenceRule;
+import rules.FragileSequenceRule;
+
 import java.awt.Color;
 import java.util.*;
 
@@ -36,7 +41,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity, Color.BLUE));
         tubes.add(createTube(capacity)); // пустая
 
-        return new Level(tubes);
+        return new Level(tubes, new ColorSequenceRule());
     }
 
     public static Level createLevelWithColors() {
@@ -49,7 +54,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity)); // пустая
         tubes.add(createTube(capacity)); // пустая
 
-        return new Level(tubes);
+        return new Level(tubes, new ColorSequenceRule());
     }
 
     public static Level createLevelWithFragile() {
@@ -66,7 +71,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity)); // пустая
         tubes.add(createTube(capacity)); // пустая
 
-        return new Level(tubes);
+        return new Level(tubes, new CompositeSequenceRule(new ColorSequenceRule(), new FragileSequenceRule()));
     }
 
     public static Level createLevelWithCharges() {
@@ -89,7 +94,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity));
         tubes.add(createTube(capacity));
 
-        return new Level(tubes);
+        return new Level(tubes, new CompositeSequenceRule(new ColorSequenceRule(), new ChargeSequenceRule()));
     }
 
     public static Level getRandomLevel() {

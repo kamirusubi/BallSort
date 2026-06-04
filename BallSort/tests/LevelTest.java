@@ -38,7 +38,7 @@ class LevelTest {
         Level originalLevel = LevelFactory.createSimpleLevel();
         List<Tube> originalTubes = originalLevel.getTubes();
 
-        Level newLevel = new Level(originalTubes);
+        Level newLevel = new Level(originalTubes, rule);
         List<Tube> newTubes = newLevel.getTubes();
 
         assertEquals(originalTubes.size(), newTubes.size());
@@ -62,7 +62,7 @@ class LevelTest {
 
         Tube from = tubes.get(0);
         Tube to = tubes.get(3);
-        level.executeMove(from, to, rule);
+        level.executeMove(from, to);
 
         assertNotEquals(initialBallCount0, tubes.get(0).getBallCount());
         assertNotEquals(initialBallCount1, tubes.get(3).getBallCount());
@@ -84,7 +84,7 @@ class LevelTest {
         List<Ball> ballsToMove = from.peekSequence(rule);
         int expectedMoveCount = ballsToMove.size();
 
-        boolean result = level.executeMove(from, to, rule);
+        boolean result = level.executeMove(from, to);
 
         assertTrue(result);
         assertEquals(fromInitialCount - expectedMoveCount, from.getBallCount());
@@ -96,7 +96,7 @@ class LevelTest {
         Tube from = tubes.get(3);
         Tube to = tubes.get(2);
 
-        boolean result = level.executeMove(from, to, rule);
+        boolean result = level.executeMove(from, to);
 
         assertFalse(result);
     }
@@ -106,14 +106,14 @@ class LevelTest {
         Tube from = tubes.get(0);
         Tube to = tubes.get(3);
 
-        level.executeMove(from, to, rule);
+        level.executeMove(from, to);
 
         Tube anotherTo = tubes.get(1);
-        level.executeMove(anotherTo, to, rule);
+        level.executeMove(anotherTo, to);
 
         assertTrue(to.isFull());
 
-        boolean result = level.executeMove(to, to, rule);
+        boolean result = level.executeMove(to, to);
 
         assertFalse(result);
         assertEquals(to.getBallCount(), to.getBallCount());
@@ -125,13 +125,13 @@ class LevelTest {
         Tube from = tubes.get(1);
         Tube to = tubes.get(2);
 
-        level.executeMove(from, to, rule);
-        assertTrue(level.isLevelCompleted(rule));
+        level.executeMove(from, to);
+        assertTrue(level.isLevelCompleted());
     }
 
     @Test
     void test9_IsLevelCompletedReturnsFalse() {
-        assertFalse(level.isLevelCompleted(rule));
+        assertFalse(level.isLevelCompleted());
     }
 
     @Test
@@ -142,7 +142,7 @@ class LevelTest {
         Ball fromBall = from.peekOne();
         assertEquals(Color.BLUE, fromBall.getProperty(ColorProperty.class).getColor());
 
-        boolean result = level.executeMove(from, to, rule);
+        boolean result = level.executeMove(from, to);
 
         assertTrue(result);
         assertEquals(0, from.getBallCount());
@@ -155,10 +155,10 @@ class LevelTest {
         Tube tube1 = tubes.get(1);
         Tube tube3 = tubes.get(3);
 
-        level.executeMove(tube0, tube3, rule);
+        level.executeMove(tube0, tube3);
         int tube3AfterFirst = tube3.getBallCount();
 
-        boolean secondMoveResult = level.executeMove(tube1, tube0, rule);
+        boolean secondMoveResult = level.executeMove(tube1, tube0);
 
         assertTrue(secondMoveResult);
         assertEquals(tube3AfterFirst, tube3.getBallCount());
@@ -170,8 +170,8 @@ class LevelTest {
                 .map(Tube::getBallCount)
                 .toList();
 
-        level.executeMove(tubes.get(0), tubes.get(3), rule);
-        level.executeMove(tubes.get(1), tubes.get(3), rule);
+        level.executeMove(tubes.get(0), tubes.get(3));
+        level.executeMove(tubes.get(1), tubes.get(3));
 
         assertNotEquals(initialCounts, tubes.stream().map(Tube::getBallCount).toList());
 
@@ -184,9 +184,9 @@ class LevelTest {
     void test13_ExecuteMoveWithNullParameters() {
         Tube validTube = tubes.get(0);
 
-        assertThrows(NullPointerException.class, () -> level.executeMove(null, validTube, rule));
+        assertThrows(NullPointerException.class, () -> level.executeMove(null, validTube));
 
-        assertThrows(NullPointerException.class, () -> level.executeMove(validTube, null, rule));
+        assertThrows(NullPointerException.class, () -> level.executeMove(validTube, null));
     }
 
     @Test
@@ -195,8 +195,8 @@ class LevelTest {
                 new Tube(4),
                 new Tube(4)
         );
-        Level emptyLevel = new Level(customTubes);
+        Level emptyLevel = new Level(customTubes, rule);
 
-        assertTrue(emptyLevel.isLevelCompleted(rule));
+        assertTrue(emptyLevel.isLevelCompleted());
     }
 }

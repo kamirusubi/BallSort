@@ -4,6 +4,7 @@ import model.Tube;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import rules.CompositeSequenceRule;
+import rules.SequenceRule;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ class GameTest {
     @Test
     void test01_GetRulesReturnsCompositeRule() {
         assertNotNull(game.getRules());
-        assertInstanceOf(CompositeSequenceRule.class, game.getRules());
+        assertInstanceOf(SequenceRule.class, game.getRules());
     }
 
     @Test

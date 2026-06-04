@@ -1,27 +1,13 @@
 package game;
 
 import model.*;
-import rules.*;
+import rules.SequenceRule;
 import factory.LevelFactory;
-
 import java.util.*;
 
 public class Game {
     private Level _level;
-    private final CompositeSequenceRule _rules = new CompositeSequenceRule(new ColorSequenceRule(), new ChargeSequenceRule(), new FragileSequenceRule());
     private final List<GameListener> _moveListeners = new ArrayList<>();
-
-    public SequenceRule getRules() {
-        return _rules;
-    }
-
-    public void addGameListener(GameListener listener) {
-        _moveListeners.add(listener);
-    }
-
-    public void removeGameListener(GameListener listener) {
-        _moveListeners.remove(listener);
-    }
 
     public void start() {
         _level = LevelFactory.getRandomLevel();
@@ -29,6 +15,10 @@ public class Game {
 
     public void startForTests() {
         _level = LevelFactory.createSimpleLevel();
+    }
+
+    public SequenceRule getRules() {
+        return _level != null ? _level.getRules() : null;
     }
 
     public boolean tryMove(Tube from, Tube to) {
@@ -40,7 +30,7 @@ public class Game {
             return false;
         }
 
-        if(!_level.executeMove(from, to, _rules)) {
+        if (!_level.executeMove(from, to)) {
             notifyMoveAttempt(false, from, to);
             return false;
         }
@@ -56,25 +46,15 @@ public class Game {
 
     public boolean validateMove(Tube from, Tube to) {
         List<Tube> levelTubes = _level.getTubes();
+        if (!levelTubes.contains(from) || !levelTubes.contains(to)) return false;
+        if (from == null || from.isEmpty()) return false;
+        if (to == null || !to.hasSpace()) return false;
 
-        if(!levelTubes.contains(from) || !levelTubes.contains(to)) return false;
-
-        if (from == null || from.isEmpty()) {
-            return false;
-        }
-
-        if (to == null || !to.hasSpace()) {
-            return false;
-        }
-
-        Ball fromTopBall = from.peekOne();
-        Ball targetTopBall = to.peekOne();
-
-        return _rules.canStack(fromTopBall, targetTopBall);
+        return _level.getRules().canStack(from.peekOne(), to.peekOne());
     }
 
     public boolean isLevelCompleted() {
-        return _level.isLevelCompleted(_rules);
+        return _level.isLevelCompleted();
     }
 
     public Level getCurrentLevel() {
@@ -85,6 +65,14 @@ public class Game {
         if (_level != null) {
             _level.reset();
         }
+    }
+
+    public void addGameListener(GameListener listener) {
+        _moveListeners.add(listener);
+    }
+
+    public void removeGameListener(GameListener listener) {
+        _moveListeners.remove(listener);
     }
 
     private void notifyMoveAttempt(boolean success, Tube from, Tube to) {

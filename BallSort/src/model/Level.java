@@ -1,17 +1,20 @@
 package model;
 
-import rules.SequenceRule;
+import rules.*;
+
 import java.util.*;
 
 public class Level implements TubeSelectionListener {
 
     private final List<Tube> _tubes = new ArrayList<>();
     private final List<Tube> _originalTubes;
+    private final SequenceRule  _rules;
     private Tube _selectedTube = null;
     private final List<TubeSelectionListener> _tubeSelectionListeners = new ArrayList<>();
 
-    public Level(List<Tube> tubes) {
+    public Level(List<Tube> tubes, SequenceRule rules) {
         _originalTubes = tubes;
+        _rules = rules;
 
         for (Tube tube : tubes) {
             _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls())));
@@ -38,16 +41,20 @@ public class Level implements TubeSelectionListener {
         }
     }
 
+    public SequenceRule getRules() {
+        return _rules;
+    }
+
     public List<Tube> getTubes() {
         return Collections.unmodifiableList(_tubes);
     }
 
-    public boolean executeMove(Tube from, Tube to, SequenceRule rules) {
+    public boolean executeMove(Tube from, Tube to) {
         if (from.isEmpty() || !to.hasSpace()) {
             return false;
         }
 
-        List<Ball> ballsToMove = from.peekSequence(rules);
+        List<Ball> ballsToMove = from.peekSequence(_rules);
 
         for (Ball ball : ballsToMove) {
             if(to.hasSpace()){
@@ -58,10 +65,10 @@ public class Level implements TubeSelectionListener {
         return true;
     }
 
-    public boolean isLevelCompleted(SequenceRule rules) {
+    public boolean isLevelCompleted() {
         for (Tube tube : _tubes) {
             if (!tube.isEmpty()) {
-                if (!isTubeUniform(tube, rules) || !tube.isFull()) {
+                if (!isTubeUniform(tube, _rules) || !tube.isFull()) {
                     return false;
                 }
             }
