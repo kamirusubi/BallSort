@@ -29,7 +29,13 @@ public class Ball {
 
     @Override
     public String toString() {
-        ChargeProperty chargeProp = getProperty(ChargeProperty.class);
-        return chargeProp.toString();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < _properties.size(); i++) {
+            BallProperty property = _properties.get(i);
+            if (!(property instanceof ColorProperty)) {
+                sb.append(property.toString());
+            }
+        }
+        return sb.toString();
     }
 }

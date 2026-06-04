@@ -1,12 +1,10 @@
-import model.Ball;
-import model.Charge;
-import model.ChargeProperty;
-import model.ColorProperty;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import rules.ColorSequenceRule;
 import rules.ChargeSequenceRule;
 import rules.CompositeSequenceRule;
+import rules.FragileSequenceRule;
 
 import java.awt.Color;
 
@@ -88,5 +86,64 @@ class CompositeSequenceRuleTest {
     void test08_getRulesReturnsUnmodifiableList() {
         rule.addRule(new ColorSequenceRule());
         assertThrows(UnsupportedOperationException.class, () -> rule.getRules().add(new ChargeSequenceRule()));
+    }
+
+    @Test
+    void test09_compositeRuleWithFragileRule() {
+        CompositeSequenceRule compositeRule = new CompositeSequenceRule(
+                new ColorSequenceRule(),
+                new FragileSequenceRule()
+        );
+
+        Ball top = new Ball(new ColorProperty(Color.RED));
+        Ball bottom = new Ball(new ColorProperty(Color.RED));
+
+        assertTrue(compositeRule.canStack(top, bottom));
+    }
+
+    @Test
+    void test10_compositeRuleWithFragileRuleFailsOnFragileBottom() {
+        CompositeSequenceRule compositeRule = new CompositeSequenceRule(
+                new ColorSequenceRule(),
+                new FragileSequenceRule()
+        );
+
+        Ball top = new Ball(new ColorProperty(Color.RED));
+        Ball bottom = new Ball(new ColorProperty(Color.RED), new FragileProperty());
+
+        assertFalse(compositeRule.canStack(top, bottom));
+    }
+
+    @Test
+    void test11_compositeRuleWithAllThreeRules() {
+        CompositeSequenceRule fullRule = new CompositeSequenceRule(
+                new ColorSequenceRule(),
+                new ChargeSequenceRule(),
+                new FragileSequenceRule()
+        );
+
+        Ball top = new Ball(
+                new ColorProperty(Color.RED),
+                new ChargeProperty(Charge.POSITIVE)
+        );
+        Ball bottom = new Ball(
+                new ColorProperty(Color.RED),
+                new ChargeProperty(Charge.NEGATIVE)
+        );
+
+        assertTrue(fullRule.canStack(top, bottom));
+    }
+
+    @Test
+    void test12_compositeRuleWithFragileFailsEvenIfColorsMatch() {
+        CompositeSequenceRule compositeRule = new CompositeSequenceRule(
+                new ColorSequenceRule(),
+                new FragileSequenceRule()
+        );
+
+        Ball top = new Ball(new ColorProperty(Color.RED));
+        Ball bottom = new Ball(new ColorProperty(Color.RED), new FragileProperty());
+
+        assertFalse(compositeRule.canStack(top, bottom));
     }
 }

@@ -1,13 +1,9 @@
 package view;
 
-import model.Ball;
-import model.ColorProperty;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
-
-import model.ChargeProperty;
-import model.Charge;
 
 public class BallWidget extends JPanel {
 
@@ -36,19 +32,15 @@ public class BallWidget extends JPanel {
         g.setColor(Color.BLACK);
         g.drawOval(x, drawY, BALL_DIAMETER, BALL_DIAMETER);
 
-        ChargeProperty chargeProp = _ball.getProperty(ChargeProperty.class);
-        if (chargeProp != null) {
-            Charge charge = chargeProp.getCharge();
-            g.setColor(Color.BLACK);
-            g.setFont(new Font("Arial", Font.BOLD, 14));
-            FontMetrics fm = g.getFontMetrics();
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 14));
+        FontMetrics fm = g.getFontMetrics();
 
-            String symbol = _ball.toString();
+        String symbol = _ball.toString();
 
-            int symbolX = x + (BALL_DIAMETER - fm.stringWidth(symbol)) / 2;
-            int symbolY = drawY + (BALL_DIAMETER + fm.getAscent() - fm.getDescent()) / 2;
+        int symbolX = x + (BALL_DIAMETER - fm.stringWidth(symbol)) / 2;
+        int symbolY = drawY + (BALL_DIAMETER + fm.getAscent() - fm.getDescent()) / 2;
 
-            g.drawString(symbol, symbolX, symbolY);
-        }
+        g.drawString(symbol, symbolX, symbolY);
     }
 }

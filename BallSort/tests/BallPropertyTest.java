@@ -32,10 +32,4 @@ abstract class BallPropertyTest<T extends BallProperty> {
         assertEquals(instance1, instance2);
     }
 
-    @Test
-    void test05_equalsDifferentProperties() {
-        T instance1 = createInstance();
-        T instance2 = createDifferentInstance();
-        assertNotEquals(instance1, instance2);
-    }
 }

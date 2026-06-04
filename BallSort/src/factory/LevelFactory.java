@@ -52,6 +52,23 @@ public class LevelFactory {
         return new Level(tubes);
     }
 
+    public static Level createLevelWithFragile() {
+        int capacity = 4;
+        List<Tube> tubes = new ArrayList<>();
+
+        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.GREEN, Color.BLUE));
+        tubes.add(createTube(capacity, Color.BLUE, Color.BLUE, Color.BLUE, Color.RED));
+
+        Ball greenFragile = new Ball(new ColorProperty(Color.GREEN), new FragileProperty());
+
+        tubes.add(createTube(capacity, Color.GREEN, Color.RED, Color.GREEN, greenFragile));
+
+        tubes.add(createTube(capacity)); // пустая
+        tubes.add(createTube(capacity)); // пустая
+
+        return new Level(tubes);
+    }
+
     public static Level createLevelWithCharges() {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
@@ -77,7 +94,7 @@ public class LevelFactory {
 
     public static Level getRandomLevel() {
         Random random = new Random();
-        int levelNumber = random.nextInt(2) + 1;
+        int levelNumber = random.nextInt(3) + 1;
         return getLevel(levelNumber);
     }
 
@@ -86,6 +103,8 @@ public class LevelFactory {
             case 1:
                 return createLevelWithColors();
             case 2:
+                return createLevelWithFragile();
+            case 3:
                 return createLevelWithCharges();
             default:
                 throw new IllegalArgumentException("Неверный номер уровня: " + levelNumber);
