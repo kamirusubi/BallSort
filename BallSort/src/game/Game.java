@@ -45,11 +45,12 @@ public class Game {
             return false;
         }
 
+        notifyMoveAttempt(true, from, to);
+
         if (isLevelCompleted()) {
             notifyGameCompleted();
         }
 
-        notifyMoveAttempt(true, from, to);
         return true;
     }
 
