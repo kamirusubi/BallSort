@@ -6,10 +6,22 @@ public class Ball {
     private final List<BallProperty> _properties = new ArrayList<>();
 
     public Ball(BallProperty... properties) {
-        _properties.addAll(Arrays.asList(properties));
+        for (BallProperty property : properties) {
+            addProperty(property);
+        }
     }
 
     public void addProperty(BallProperty property) {
+        if (property == null) {
+            throw new IllegalArgumentException("Property cannot be null");
+        }
+
+        if (getProperty(property.getClass()) != null) {
+            throw new IllegalStateException(
+                    "Property of type " + property.getClass().getSimpleName() + " already exists"
+            );
+        }
+
         _properties.add(property);
     }
 
@@ -30,8 +42,7 @@ public class Ball {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < _properties.size(); i++) {
-            BallProperty property = _properties.get(i);
+        for (BallProperty property : _properties) {
             if (!(property instanceof ColorProperty)) {
                 sb.append(property.toString());
             }
