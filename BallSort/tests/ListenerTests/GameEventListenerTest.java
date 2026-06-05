@@ -1,6 +1,7 @@
 package ListenerTests;
 
 import game.Game;
+import game.GameEventListener;
 import model.Level;
 import model.Tube;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GameEventListenerTest {
+public class GameEventListenerTest {
 
     private Game game;
     private Level level;
@@ -23,6 +24,7 @@ class GameEventListenerTest {
         level.addEventListener(listener);
     }
 
+    // Событие onTubeSelected вызывается при выборе трубы
     @Test
     void test01_onTubeSelectedCalledWhenTubeSelected() {
         Tube tube = level.getTubeAt(0);
@@ -35,6 +37,7 @@ class GameEventListenerTest {
         assertEquals(2, listener.lastLiftedCount);
     }
 
+    // Событие onTubeDeselected вызывается при снятии выбора трубы
     @Test
     void test02_onTubeDeselectedCalledWhenTubeDeselected() {
         Tube tube = level.getTubeAt(0);
@@ -46,6 +49,7 @@ class GameEventListenerTest {
         assertEquals(tube, listener.lastDeselectedTube);
     }
 
+    // Событие onMoveSucceeded вызывается при успешном перемещении
     @Test
     void test03_onMoveSucceededCalledOnSuccessfulMove() {
         Tube from = level.getTubeAt(0);
@@ -60,6 +64,7 @@ class GameEventListenerTest {
         assertEquals(to, listener.lastMoveTo);
     }
 
+    // Событие onMoveFailed вызывается при неудачном перемещении
     @Test
     void test04_onMoveFailedCalledOnFailedMove() {
         Tube from = level.getTubeAt(1);
@@ -74,6 +79,7 @@ class GameEventListenerTest {
         assertEquals(to, listener.lastMoveTo);
     }
 
+    // Несколько ходов порождают несколько событий
     @Test
     void test05_multipleMovesProduceMultipleEvents() {
         Tube from1 = level.getTubeAt(0);
@@ -91,13 +97,13 @@ class GameEventListenerTest {
         assertEquals(1, listener.moveFailedCount);
     }
 
+    // Событие onGameCompleted вызывается при завершении уровня
     @Test
     void test06_onGameCompletedCalledWhenLevelIsFinished() {
         Tube tube0 = level.getTubeAt(0);
         Tube tube1 = level.getTubeAt(1);
         Tube tube2 = level.getTubeAt(2);
         Tube tube3 = level.getTubeAt(3);
-        Tube emptyTube = level.getTubeAt(3);
 
         level.selectTube(tube0);
         level.selectTube(tube3);
@@ -115,6 +121,7 @@ class GameEventListenerTest {
         assertEquals(1, listener.gameCompletedCount);
     }
 
+    // Событие onGameCompleted вызывается только один раз
     @Test
     void test07_onGameCompletedCalledOnlyOnce() {
         Tube tube0 = level.getTubeAt(0);
@@ -140,6 +147,7 @@ class GameEventListenerTest {
         assertEquals(1, listener.gameCompletedCount);
     }
 
+    // Множественные слушатели все получают события
     @Test
     void test08_multipleListenersAllReceiveEvents() {
         TestGameEventListener listener2 = new TestGameEventListener();
@@ -155,6 +163,7 @@ class GameEventListenerTest {
         assertEquals(1, listener2.moveSucceededCount);
     }
 
+    // Удаление слушателя останавливает получение событий
     @Test
     void test09_removeListenerStopsReceivingEvents() {
         level.removeEventListener(listener);
@@ -170,6 +179,7 @@ class GameEventListenerTest {
         assertEquals(0, listener.tubeSelectedCount);
     }
 
+    // Выбор пустой трубы не вызывает события onTubeSelected
     @Test
     void test10_selectingEmptyTubeDoesNotTriggerSelection() {
         Tube emptyTube = level.getTubeAt(3);
@@ -180,6 +190,7 @@ class GameEventListenerTest {
         assertNull(level.getPendingTube());
     }
 
+    // Отмена выбора через повторный клик по той же трубе работает корректно
     @Test
     void test11_deselectViaSelectingSameTube() {
         Tube tube = level.getTubeAt(0);

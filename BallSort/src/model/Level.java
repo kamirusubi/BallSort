@@ -2,6 +2,7 @@ package model;
 
 import rules.SequenceRule;
 import game.GameEventListener;
+import game.ListenerPriority;
 
 import java.util.*;
 
@@ -100,6 +101,9 @@ public class Level {
     public void addEventListener(GameEventListener listener) {
         if (listener != null && !_listeners.contains(listener)) {
             _listeners.add(listener);
+            _listeners.sort((a, b) ->
+                    Integer.compare(b.getPriority().getValue(), a.getPriority().getValue())
+            );
         }
     }
 
@@ -138,56 +142,49 @@ public class Level {
         }
     }
 
-    private void notifyTubeSelected(Tube tube) {
-        int liftedCount = tube.peekSequence().size();
+    @FunctionalInterface
+    private interface EventDispatcher {
+        void dispatch(GameEventListener listener);
+    }
 
+    private void notifyListenersByWave(EventDispatcher dispatcher) {
+        Set<Integer> priorities = new TreeSet<>((a, b) -> Integer.compare(b, a));
         for (GameEventListener listener : _listeners) {
-            try {
-                listener.onTubeSelected(tube, liftedCount);
-            } catch (Exception e) {
-                // Логируем ошибку, но не даем ей сломать модель
-                System.err.println("Error in GameEventListener.onTubeSelected: " + e.getMessage());
+            priorities.add(listener.getPriority().getValue());
+        }
+
+        for (int priority : priorities) {
+            for (GameEventListener listener : _listeners) {
+                if (listener.getPriority().getValue() == priority) {
+                    try {
+                        dispatcher.dispatch(listener);
+                    } catch (Exception e) {
+                        System.err.println("Error in GameEventListener (priority " + priority + "): " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
             }
         }
+    }
+
+    private void notifyTubeSelected(Tube tube) {
+        int liftedCount = tube.peekSequence().size();
+        notifyListenersByWave(listener -> listener.onTubeSelected(tube, liftedCount));
     }
 
     private void notifyTubeDeselected(Tube tube) {
-        for (GameEventListener listener : _listeners) {
-            try {
-                listener.onTubeDeselected(tube);
-            } catch (Exception e) {
-                System.err.println("Error in GameEventListener.onTubeDeselected: " + e.getMessage());
-            }
-        }
+        notifyListenersByWave(listener -> listener.onTubeDeselected(tube));
     }
 
     private void notifyMoveSucceeded(Tube from, Tube to, int movedCount) {
-        for (GameEventListener listener : _listeners) {
-            try {
-                listener.onMoveSucceeded(from, to, movedCount);
-            } catch (Exception e) {
-                System.err.println("Error in GameEventListener.onMoveSucceeded: " + e.getMessage());
-            }
-        }
+        notifyListenersByWave(listener -> listener.onMoveSucceeded(from, to, movedCount));
     }
 
     private void notifyMoveFailed(Tube from, Tube to) {
-        for (GameEventListener listener : _listeners) {
-            try {
-                listener.onMoveFailed(from, to);
-            } catch (Exception e) {
-                System.err.println("Error in GameEventListener.onMoveFailed: " + e.getMessage());
-            }
-        }
+        notifyListenersByWave(listener -> listener.onMoveFailed(from, to));
     }
 
     private void notifyGameCompleted() {
-        for (GameEventListener listener : _listeners) {
-            try {
-                listener.onGameCompleted();
-            } catch (Exception e) {
-                System.err.println("Error in GameEventListener.onGameCompleted: " + e.getMessage());
-            }
-        }
+        notifyListenersByWave(GameEventListener::onGameCompleted);
     }
 }

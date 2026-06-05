@@ -13,4 +13,8 @@ public interface GameEventListener {
     void onMoveFailed(Tube from, Tube to);
 
     void onGameCompleted();
+
+    default ListenerPriority getPriority() {
+        return ListenerPriority.LOW;
+    }
 }

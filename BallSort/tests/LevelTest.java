@@ -15,7 +15,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LevelTest {
+public class LevelTest {
 
     private Level level;
     private SequenceRule rule;

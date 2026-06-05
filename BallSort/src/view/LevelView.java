@@ -2,15 +2,13 @@ package view;
 
 import game.Game;
 import game.GameEventListener;
+import game.ListenerPriority;
 import model.Level;
 import model.Tube;
-import model.Ball;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class LevelView extends JPanel {
@@ -73,6 +71,11 @@ public class LevelView extends JPanel {
             public void onGameCompleted() {
                 updateAllVisuals();
                 JOptionPane.showMessageDialog(LevelView.this, "Победа!");
+            }
+
+            @Override
+            public ListenerPriority getPriority() {
+                return ListenerPriority.LOWEST;
             }
         };
         _level.addEventListener(_currentListener);
