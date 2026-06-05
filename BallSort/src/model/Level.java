@@ -116,13 +116,6 @@ public class Level {
     }
 
     private void executeMove(Tube from, Tube to) {
-        if (!from.canStackOnTop(to.peekOne())) {
-            notifyMoveFailed(from, to);
-            _pendingTube = null;
-            notifyTubeDeselected(from);
-            return;
-        }
-
         int movedCount = from.moveTo(to);
 
         if (movedCount > 0) {
