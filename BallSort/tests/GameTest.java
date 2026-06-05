@@ -21,13 +21,7 @@ class GameTest {
     }
 
     @Test
-    void test01_GetRulesReturnsCompositeRule() {
-        assertNotNull(game.getRules());
-        assertInstanceOf(SequenceRule.class, game.getRules());
-    }
-
-    @Test
-    void test02_StartSetsLevel() {
+    void test01_StartSetsLevel() {
         Game newGame = new Game();
         assertNull(newGame.getCurrentLevel());
 
@@ -37,13 +31,13 @@ class GameTest {
     }
 
     @Test
-    void test03_ResetOnNullLevelDoesNothing() {
+    void test02_ResetOnNullLevelDoesNothing() {
         Game newGame = new Game();
         assertDoesNotThrow(newGame::reset);
     }
 
     @Test
-    void test04_GetCurrentLevel() {
+    void test03_GetCurrentLevel() {
         assertNotNull(game.getCurrentLevel());
         assertInstanceOf(Level.class, game.getCurrentLevel());
     }

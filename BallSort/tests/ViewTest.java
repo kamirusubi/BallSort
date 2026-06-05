@@ -54,7 +54,7 @@ class ViewTest {
     void test03_TubeWidgetCreation() {
         Tube tube = level.getTubes().get(0);
 
-        TubeWidget widget = new TubeWidget(tube, tube.getRules());
+        TubeWidget widget = new TubeWidget(tube);
 
         assertNotNull(widget);
         assertEquals(tube, widget.getTube());
@@ -66,7 +66,7 @@ class ViewTest {
     void test04_TubeWidgetPreferredSize() {
         SequenceRule rule = new ColorSequenceRule();
         Tube tube = new Tube(4, rule);
-        TubeWidget widget = new TubeWidget(tube, rule);
+        TubeWidget widget = new TubeWidget(tube);
 
         Dimension preferredSize = widget.getPreferredSize();
 

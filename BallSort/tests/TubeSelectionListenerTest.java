@@ -232,7 +232,7 @@ class TubeSelectionListenerTest {
     @Test
     void test14_tubeFromAnotherLevelDoesNotAffectLevel() {
         Tube tubeFromLevel = level.getTubes().get(0);
-        SequenceRule rule = level.getRules();
+        SequenceRule rule = tubeFromLevel.getRules();
         Tube outsideTube = new Tube(4, rule);
 
         int initialCount = tubeFromLevel.getBallCount();

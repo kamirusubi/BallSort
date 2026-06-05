@@ -17,10 +17,6 @@ public class Game {
         _level = LevelFactory.createSimpleLevel();
     }
 
-    public SequenceRule getRules() {
-        return _level != null ? _level.getRules() : null;
-    }
-
     public boolean isLevelCompleted() {
         return _level != null && _level.isLevelCompleted();
     }

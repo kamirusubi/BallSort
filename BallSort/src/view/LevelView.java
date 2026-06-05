@@ -66,7 +66,7 @@ public class LevelView extends JPanel implements TubeSelectionListener, LevelLis
 
         for (int i = 0; i < tubeCount; i++) {
             Tube tube = tubes.get(i);
-            TubeWidget widget = new TubeWidget(tube, _game.getRules());
+            TubeWidget widget = new TubeWidget(tube);
             _tubeWidgets.put(tube, widget);
 
             gbc.gridx = i % TUBES_PER_ROW;

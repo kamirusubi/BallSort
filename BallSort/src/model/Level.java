@@ -11,13 +11,11 @@ public class Level implements TubeSelectionListener {
     private Tube _selectedTube = null;
     private final List<TubeSelectionListener> _tubeSelectionListeners = new ArrayList<>();
     private final List<LevelListener> _levelListeners = new ArrayList<>();
-    private final SequenceRule  _rules;
 
     public Level(List<Tube> tubes, SequenceRule rules) {
         _originalTubes = tubes;
-        _rules = rules;
         for (Tube tube : tubes) {
-            _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls()), _rules));
+            _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls()), rules));
         }
 
         for (Tube tube : _tubes) {
@@ -26,9 +24,15 @@ public class Level implements TubeSelectionListener {
     }
 
     public void reset() {
+        if (_originalTubes == null || _originalTubes.isEmpty()) {
+            return;
+        }
+
+        SequenceRule rules = _originalTubes.get(0).getRules();
+
         _tubes.clear();
         for (Tube tube : _originalTubes) {
-            _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls()), _rules));
+            _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls()), rules));
         }
 
         for (Tube newTube : _tubes) {
@@ -77,10 +81,6 @@ public class Level implements TubeSelectionListener {
         return true;
     }
 
-    public SequenceRule getRules() {
-        return _rules;
-    }
-
     public void addLevelListener(LevelListener listener) {
         _levelListeners.add(listener);
     }
@@ -110,18 +110,18 @@ public class Level implements TubeSelectionListener {
     }
 
     private void handleTubeSelection(Tube tube) {
-        if (_selectedTube == null) { // Если выбирается первая труба
+        if (_selectedTube == null) {
             if (!tube.isEmpty()) {
                 _selectedTube = tube;
                 notifyFirstTubeSelected(tube);
-            } else { // нельзя выбрать пустую
+            } else {
                 tube.setSelected(false);
             }
-        } else { // выбирается вторая труба
-            if (_selectedTube == tube) { // если выбрана первая, то снимаем выделение
+        } else {
+            if (_selectedTube == tube) {
                 _selectedTube.setSelected(false);
                 _selectedTube = null;
-            } else { // если отличается от первой
+            } else {
                 executeMove(_selectedTube, tube);
             }
         }

@@ -17,11 +17,9 @@ public class TubeWidget extends JPanel {
     private static final Color ERROR_BORDER_COLOR = Color.RED;
 
     private final Tube _tube;
-    private final SequenceRule _rules;
 
-    public TubeWidget(Tube tube, SequenceRule rules) {
+    public TubeWidget(Tube tube) {
         _tube = tube;
-        _rules = rules;
 
         int height = calculateHeight();
         setPreferredSize(new Dimension(TUBE_WIDTH, height));
