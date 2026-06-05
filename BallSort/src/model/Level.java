@@ -1,15 +1,15 @@
 package model;
 
-import game.LevelListener;
 import rules.SequenceRule;
+import game.GameEventListener;
+
 import java.util.*;
 
-public class Level implements TubeSelectionListener {
+public class Level {
 
     private final List<Tube> _tubes = new ArrayList<>();
-    private Tube _selectedTube = null;
-    private final List<TubeSelectionListener> _tubeSelectionListeners = new ArrayList<>();
-    private final List<LevelListener> _levelListeners = new ArrayList<>();
+    private Tube _pendingTube = null;
+    private final List<GameEventListener> _listeners = new ArrayList<>();
 
     public Level(List<Tube> tubes, SequenceRule rules) {
         if (tubes == null || tubes.size() < 2) {
@@ -19,10 +19,6 @@ public class Level implements TubeSelectionListener {
         for (Tube tube : tubes) {
             _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls()), rules));
         }
-
-        for (Tube tube : _tubes) {
-            tube.addSelectionListener(this);
-        }
     }
 
     public void reset() {
@@ -30,9 +26,10 @@ public class Level implements TubeSelectionListener {
             tube.reset();
         }
 
-        if (_selectedTube != null) {
-            _selectedTube.setSelected(false);
-            _selectedTube = null;
+        if (_pendingTube != null) {
+            Tube oldPending = _pendingTube;
+            _pendingTube = null;
+            notifyTubeDeselected(oldPending);
         }
     }
 
@@ -40,25 +37,75 @@ public class Level implements TubeSelectionListener {
         return Collections.unmodifiableList(_tubes);
     }
 
-    public boolean executeMove(Tube from, Tube to) {
-        from.setSelected(false);
-        to.setSelected(false);
+    public int getTubeCount() {
+        return _tubes.size();
+    }
 
-        if (!_tubes.contains(from) || !_tubes.contains(to)) {
-            notifyMoveAttempt(false, from, to);
-            return false;
+    public Tube getTubeAt(int index) {
+        if (index < 0 || index >= _tubes.size()) {
+            throw new IndexOutOfBoundsException("Invalid tube index: " + index);
+        }
+        return _tubes.get(index);
+    }
+
+    public void handleTubeClick(Tube clickedTube) {
+        if (!_tubes.contains(clickedTube)) {
+            notifyMoveFailed(clickedTube, clickedTube);
+            return;
+        }
+
+        if (_pendingTube == null) {
+            if (clickedTube.isEmpty()) {
+                return;
+            }
+            _pendingTube = clickedTube;
+            notifyTubeSelected(clickedTube);
+            return;
+        }
+
+        if (_pendingTube == clickedTube) {
+            _pendingTube = null;
+            notifyTubeDeselected(clickedTube);
+            return;
+        }
+
+        executeMove(_pendingTube, clickedTube);
+    }
+
+    private void executeMove(Tube from, Tube to) {
+        if (!from.getRules().canStack(from.peekOne(), to.peekOne())) {
+            notifyMoveFailed(from, to);
+            _pendingTube = null;
+            notifyTubeDeselected(from);
+            return;
         }
 
         int movedCount = from.moveTo(to);
-        boolean success = movedCount > 0;
 
-        notifyMoveAttempt(success, from, to);
+        if (movedCount > 0) {
+            Tube oldPending = _pendingTube;
+            _pendingTube = null;
 
-        if (success && isLevelCompleted()) {
-            notifyLevelCompleted();
+            notifyMoveSucceeded(oldPending, to, movedCount);
+            notifyTubeDeselected(oldPending);
+
+            if (isLevelCompleted()) {
+                notifyGameCompleted();
+            }
+        } else {
+            notifyMoveFailed(from, to);
+            _pendingTube = null;
+            notifyTubeDeselected(from);
         }
+    }
 
-        return success;
+    public Tube getPendingTube() {
+        return _pendingTube;
+    }
+
+    public List<Ball> getSequenceToMove(Tube tube) {
+        if (tube == null || tube.isEmpty()) return Collections.emptyList();
+        return tube.peekSequence();
     }
 
     public boolean isLevelCompleted() {
@@ -72,72 +119,47 @@ public class Level implements TubeSelectionListener {
         return true;
     }
 
-    public void addLevelListener(LevelListener listener) {
-        _levelListeners.add(listener);
-    }
-
-    public void removeLevelListener(LevelListener listener) {
-        _levelListeners.remove(listener);
-    }
-
-    private void notifyMoveAttempt(boolean success, Tube from, Tube to) {
-        for (LevelListener listener : _levelListeners) {
-            listener.onMoveAttempt(success, from, to);
+    public void addEventListener(GameEventListener listener) {
+        if (listener != null && !_listeners.contains(listener)) {
+            _listeners.add(listener);
         }
     }
 
-    private void notifyLevelCompleted() {
-        for (LevelListener listener : _levelListeners) {
+    public void removeEventListener(GameEventListener listener) {
+        _listeners.remove(listener);
+    }
+
+    public void clearEventListeners() {
+        _listeners.clear();
+    }
+
+    private void notifyTubeSelected(Tube tube) {
+        for (GameEventListener listener : _listeners) {
+            listener.onTubeSelected(tube);
+        }
+    }
+
+    private void notifyTubeDeselected(Tube tube) {
+        for (GameEventListener listener : _listeners) {
+            listener.onTubeDeselected(tube);
+        }
+    }
+
+    private void notifyMoveSucceeded(Tube from, Tube to, int movedCount) {
+        for (GameEventListener listener : _listeners) {
+            listener.onMoveSucceeded(from, to, movedCount);
+        }
+    }
+
+    private void notifyMoveFailed(Tube from, Tube to) {
+        for (GameEventListener listener : _listeners) {
+            listener.onMoveFailed(from, to);
+        }
+    }
+
+    private void notifyGameCompleted() {
+        for (GameEventListener listener : _listeners) {
             listener.onGameCompleted();
         }
-    }
-
-    public void addTubeSelectionListener(TubeSelectionListener listener) {
-        _tubeSelectionListeners.add(listener);
-    }
-
-    public void removeTubeSelectionListener(TubeSelectionListener listener) {
-        _tubeSelectionListeners.remove(listener);
-    }
-
-    private void handleTubeSelection(Tube tube) {
-        if (_selectedTube == null) {
-            if (!tube.isEmpty()) {
-                _selectedTube = tube;
-                notifyFirstTubeSelected(tube);
-            } else {
-                tube.setSelected(false);
-            }
-        } else {
-            if (_selectedTube == tube) {
-                _selectedTube.setSelected(false);
-                _selectedTube = null;
-            } else {
-                executeMove(_selectedTube, tube);
-            }
-        }
-    }
-
-    private void notifyFirstTubeSelected(Tube tube) {
-        for (TubeSelectionListener listener : _tubeSelectionListeners) {
-            listener.onFirstTubeSelected(tube);
-        }
-    }
-
-    private void notifyFirstTubeDeselected(Tube tube) {
-        for (TubeSelectionListener listener : _tubeSelectionListeners) {
-            listener.onFirstTubeDeselected(tube);
-        }
-    }
-
-    @Override
-    public void onFirstTubeSelected(Tube selectedTube) {
-        handleTubeSelection(selectedTube);
-    }
-
-    @Override
-    public void onFirstTubeDeselected(Tube tube) {
-        _selectedTube = null;
-        notifyFirstTubeDeselected(tube);
     }
 }
