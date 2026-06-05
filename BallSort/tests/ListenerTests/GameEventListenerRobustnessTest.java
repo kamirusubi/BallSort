@@ -1,0 +1,158 @@
+package ListenerTests;
+
+import game.Game;
+import game.GameEventListener;
+import model.Level;
+import model.Tube;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class GameEventListenerRobustnessTest {
+
+    private Game game;
+    private Level level;
+
+    @BeforeEach
+    void setUp() {
+        game = new Game();
+        game.startForTests();
+        level = game.getCurrentLevel();
+    }
+
+    @Test
+    void test01_BadListenerDoesNotBreakModelOnTubeSelected() {
+        GameEventListener badListener = new GameEventListener() {
+            @Override
+            public void onTubeSelected(Tube tube, int liftedCount) {
+                throw new RuntimeException("Bad listener exception!");
+            }
+            @Override public void onTubeDeselected(Tube tube) {}
+            @Override public void onMoveSucceeded(Tube from, Tube to, int movedCount) {}
+            @Override public void onMoveFailed(Tube from, Tube to) {}
+            @Override public void onGameCompleted() {}
+        };
+
+        level.addEventListener(badListener);
+
+        assertDoesNotThrow(() -> {
+            level.selectTube(level.getTubeAt(0));
+        });
+
+        assertEquals(level.getTubeAt(0), level.getPendingTube());
+    }
+
+    @Test
+    void test02_BadListenerDoesNotBreakModelOnMove() {
+        GameEventListener badListener = new GameEventListener() {
+            @Override
+            public void onMoveSucceeded(Tube from, Tube to, int movedCount) {
+                throw new RuntimeException("Bad listener exception!");
+            }
+            @Override public void onTubeSelected(Tube tube, int liftedCount) {}
+            @Override public void onTubeDeselected(Tube tube) {}
+            @Override public void onMoveFailed(Tube from, Tube to) {}
+            @Override public void onGameCompleted() {}
+        };
+
+        level.addEventListener(badListener);
+
+        assertDoesNotThrow(() -> {
+            level.selectTube(level.getTubeAt(0));
+            level.selectTube(level.getTubeAt(3));
+        });
+
+        assertEquals(0, level.getTubeAt(0).getBallCount());
+        assertEquals(2, level.getTubeAt(3).getBallCount());
+    }
+
+    @Test
+    void test03_MultipleBadListenersDoNotBreakModel() {
+        for (int i = 0; i < 5; i++) {
+            level.addEventListener(new GameEventListener() {
+                @Override
+                public void onTubeSelected(Tube tube, int liftedCount) {
+                    throw new RuntimeException("Bad listener " + System.identityHashCode(this));
+                }
+                @Override public void onTubeDeselected(Tube tube) {}
+                @Override public void onMoveSucceeded(Tube from, Tube to, int movedCount) {}
+                @Override public void onMoveFailed(Tube from, Tube to) {}
+                @Override public void onGameCompleted() {}
+            });
+        }
+
+        assertDoesNotThrow(() -> {
+            level.selectTube(level.getTubeAt(0));
+            level.selectTube(level.getTubeAt(3));
+        });
+
+        assertTrue(level.getTubeAt(0).isEmpty());
+    }
+
+    @Test
+    void test04_GoodAndBadListenersMixed() {
+        final int[] goodListenerCalls = {0};
+
+        GameEventListener goodListener = new GameEventListener() {
+            @Override
+            public void onMoveSucceeded(Tube from, Tube to, int movedCount) {
+                goodListenerCalls[0]++;
+            }
+            @Override public void onTubeSelected(Tube tube, int liftedCount) {}
+            @Override public void onTubeDeselected(Tube tube) {}
+            @Override public void onMoveFailed(Tube from, Tube to) {}
+            @Override public void onGameCompleted() {}
+        };
+
+        GameEventListener badListener = new GameEventListener() {
+            @Override
+            public void onMoveSucceeded(Tube from, Tube to, int movedCount) {
+                throw new RuntimeException("Bad listener!");
+            }
+            @Override public void onTubeSelected(Tube tube, int liftedCount) {}
+            @Override public void onTubeDeselected(Tube tube) {}
+            @Override public void onMoveFailed(Tube from, Tube to) {}
+            @Override public void onGameCompleted() {}
+        };
+
+        level.addEventListener(goodListener);
+        level.addEventListener(badListener);
+
+        level.selectTube(level.getTubeAt(0));
+        level.selectTube(level.getTubeAt(3));
+
+        assertEquals(1, goodListenerCalls[0]);
+    }
+
+    @Test
+    void test05_ListenersCanBeAddedAndRemovedDuringGame() {
+        final int[] calls = {0};
+
+        GameEventListener listener = new GameEventListener() {
+            @Override
+            public void onMoveSucceeded(Tube from, Tube to, int movedCount) {
+                calls[0]++;
+            }
+            @Override public void onTubeSelected(Tube tube, int liftedCount) {}
+            @Override public void onTubeDeselected(Tube tube) {}
+            @Override public void onMoveFailed(Tube from, Tube to) {}
+            @Override public void onGameCompleted() {}
+        };
+
+        level.addEventListener(listener);
+
+        level.selectTube(level.getTubeAt(0));
+        level.selectTube(level.getTubeAt(3));
+
+        assertEquals(1, calls[0]);
+
+        level.removeEventListener(listener);
+
+        level.reset();
+        level.selectTube(level.getTubeAt(0));
+        level.selectTube(level.getTubeAt(3));
+
+        assertEquals(1, calls[0]);
+    }
+}

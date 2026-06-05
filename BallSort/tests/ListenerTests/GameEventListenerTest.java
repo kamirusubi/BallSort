@@ -1,9 +1,10 @@
+package ListenerTests;
+
 import game.Game;
 import model.Level;
 import model.Tube;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.TestGameEventListener;
 
 import static org.junit.jupiter.api.Assertions.*;
 

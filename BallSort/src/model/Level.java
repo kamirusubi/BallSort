@@ -142,31 +142,52 @@ public class Level {
         int liftedCount = tube.peekSequence().size();
 
         for (GameEventListener listener : _listeners) {
-            listener.onTubeSelected(tube, liftedCount);
+            try {
+                listener.onTubeSelected(tube, liftedCount);
+            } catch (Exception e) {
+                // Логируем ошибку, но не даем ей сломать модель
+                System.err.println("Error in GameEventListener.onTubeSelected: " + e.getMessage());
+            }
         }
     }
 
     private void notifyTubeDeselected(Tube tube) {
         for (GameEventListener listener : _listeners) {
-            listener.onTubeDeselected(tube);
+            try {
+                listener.onTubeDeselected(tube);
+            } catch (Exception e) {
+                System.err.println("Error in GameEventListener.onTubeDeselected: " + e.getMessage());
+            }
         }
     }
 
     private void notifyMoveSucceeded(Tube from, Tube to, int movedCount) {
         for (GameEventListener listener : _listeners) {
-            listener.onMoveSucceeded(from, to, movedCount);
+            try {
+                listener.onMoveSucceeded(from, to, movedCount);
+            } catch (Exception e) {
+                System.err.println("Error in GameEventListener.onMoveSucceeded: " + e.getMessage());
+            }
         }
     }
 
     private void notifyMoveFailed(Tube from, Tube to) {
         for (GameEventListener listener : _listeners) {
-            listener.onMoveFailed(from, to);
+            try {
+                listener.onMoveFailed(from, to);
+            } catch (Exception e) {
+                System.err.println("Error in GameEventListener.onMoveFailed: " + e.getMessage());
+            }
         }
     }
 
     private void notifyGameCompleted() {
         for (GameEventListener listener : _listeners) {
-            listener.onGameCompleted();
+            try {
+                listener.onGameCompleted();
+            } catch (Exception e) {
+                System.err.println("Error in GameEventListener.onGameCompleted: " + e.getMessage());
+            }
         }
     }
 }

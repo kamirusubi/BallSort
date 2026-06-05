@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import rules.ColorSequenceRule;
 import rules.CompositeSequenceRule;
 import rules.SequenceRule;
-import utils.TestGameEventListener;
+import ListenerTests.TestGameEventListener;
 
 import java.awt.Color;
 import java.util.List;
