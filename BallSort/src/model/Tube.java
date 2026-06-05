@@ -72,14 +72,6 @@ public class Tube {
         }
     }
 
-    public boolean pushSequence(List<Ball> balls){
-        if(!hasSpace()) return false;
-
-        for (Ball ball : balls) pushOne(ball);
-
-        return true;
-    }
-
     public boolean hasSpace() {
         return _balls.size() < _capacity;
     }
@@ -100,8 +92,11 @@ public class Tube {
         return Collections.unmodifiableList(_balls);
     }
 
-    public SequenceRule getRules() {
-        return _rules;
+    public boolean canStackOnTop(Ball ball) {
+        if (isEmpty()) {
+            return true;
+        }
+        return _rules.canStack(peekOne(), ball);
     }
 
     public boolean isUniformed() {

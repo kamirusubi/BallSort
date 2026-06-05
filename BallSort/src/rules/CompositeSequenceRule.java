@@ -12,6 +12,12 @@ public class CompositeSequenceRule implements SequenceRule {
     }
 
     public void addRule(SequenceRule rule) {
+        if (rule == null) {
+            throw new IllegalArgumentException("Rule cannot be null");
+        }
+        if (_rules.contains(rule)) {
+            throw new IllegalStateException("Rule already exists: " + rule.getClass().getSimpleName());
+        }
         _rules.add(rule);
     }
 

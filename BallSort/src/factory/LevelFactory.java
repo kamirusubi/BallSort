@@ -97,7 +97,6 @@ public class LevelFactory {
     }
 
     private static Tube createTube(int capacity, SequenceRule rules, Object... ballSpecs) {
-        Tube tube = new Tube(capacity, rules);
         List<Ball> balls = new ArrayList<>();
 
         for (Object spec : ballSpecs) {
@@ -108,8 +107,7 @@ public class LevelFactory {
             }
         }
 
-        tube.pushSequence(balls);
-        return tube;
+        return new Tube(capacity, balls, rules);
     }
 
     private static Ball createBall(Color color, Charge charge) {

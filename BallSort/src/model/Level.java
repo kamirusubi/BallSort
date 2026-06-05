@@ -72,39 +72,17 @@ public class Level {
         executeMove(_pendingTube, clickedTube);
     }
 
-    private void executeMove(Tube from, Tube to) {
-        if (!from.getRules().canStack(from.peekOne(), to.peekOne())) {
-            notifyMoveFailed(from, to);
-            _pendingTube = null;
-            notifyTubeDeselected(from);
-            return;
-        }
-
-        int movedCount = from.moveTo(to);
-
-        if (movedCount > 0) {
-            Tube oldPending = _pendingTube;
-            _pendingTube = null;
-
-            notifyMoveSucceeded(oldPending, to, movedCount);
-            notifyTubeDeselected(oldPending);
-
-            if (isLevelCompleted()) {
-                notifyGameCompleted();
-            }
-        } else {
-            notifyMoveFailed(from, to);
-            _pendingTube = null;
-            notifyTubeDeselected(from);
-        }
-    }
-
     public Tube getPendingTube() {
         return _pendingTube;
     }
 
     public List<Ball> getSequenceToMove(Tube tube) {
-        if (tube == null || tube.isEmpty()) return Collections.emptyList();
+        if (tube == null) {
+            throw new IllegalArgumentException("Tube cannot be null");
+        }
+        if (tube.isEmpty()) {
+            return Collections.emptyList();
+        }
         return tube.peekSequence();
     }
 
@@ -131,6 +109,33 @@ public class Level {
 
     public void clearEventListeners() {
         _listeners.clear();
+    }
+
+    private void executeMove(Tube from, Tube to) {
+        if (!from.canStackOnTop(to.peekOne())) {
+            notifyMoveFailed(from, to);
+            _pendingTube = null;
+            notifyTubeDeselected(from);
+            return;
+        }
+
+        int movedCount = from.moveTo(to);
+
+        if (movedCount > 0) {
+            Tube oldPending = _pendingTube;
+            _pendingTube = null;
+
+            notifyMoveSucceeded(oldPending, to, movedCount);
+            notifyTubeDeselected(oldPending);
+
+            if (isLevelCompleted()) {
+                notifyGameCompleted();
+            }
+        } else {
+            notifyMoveFailed(from, to);
+            _pendingTube = null;
+            notifyTubeDeselected(from);
+        }
     }
 
     private void notifyTubeSelected(Tube tube) {
