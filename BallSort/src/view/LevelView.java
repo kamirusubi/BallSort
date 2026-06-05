@@ -1,9 +1,9 @@
 package view;
 
-import game.GameListener;
+import game.Game;
+import game.LevelListener;
 import model.Level;
 import model.Tube;
-import game.Game;
 import model.TubeSelectionListener;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LevelView extends JPanel implements TubeSelectionListener, GameListener {
+public class LevelView extends JPanel implements TubeSelectionListener, LevelListener {
 
     private static final int TUBES_PER_ROW = 3;
 
@@ -33,7 +33,7 @@ public class LevelView extends JPanel implements TubeSelectionListener, GameList
         _level = level;
 
         _level.addTubeSelectionListener(this);
-        _game.addGameListener(this);
+        _level.addLevelListener(this);
 
         setLayout(new GridBagLayout());
 
@@ -46,8 +46,10 @@ public class LevelView extends JPanel implements TubeSelectionListener, GameList
 
     public void updateLevel(Level newLevel) {
         _level.removeTubeSelectionListener(this);
+        _level.removeLevelListener(this);
         _level = newLevel;
         _level.addTubeSelectionListener(this);
+        _level.addLevelListener(this);
         _tubeWidgets.clear();
         removeAll();
         rebuild();
@@ -91,15 +93,12 @@ public class LevelView extends JPanel implements TubeSelectionListener, GameList
     }
 
     @Override
-    public void onTwoTubesSelected(Tube from, Tube to) {
-        _game.tryMove(from, to);
-    }
-
-    @Override
     public void onMoveAttempt(boolean success, Tube from, Tube to) {
         if (success) {
-            _tubeWidgets.get(from).repaint();
-            _tubeWidgets.get(to).repaint();
+            TubeWidget fromWidget = _tubeWidgets.get(from);
+            TubeWidget toWidget = _tubeWidgets.get(to);
+            if (fromWidget != null) fromWidget.repaint();
+            if (toWidget != null) toWidget.repaint();
         } else {
             TubeWidget errorWidget = _tubeWidgets.get(to);
             if (errorWidget != null) {

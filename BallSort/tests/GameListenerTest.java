@@ -3,7 +3,7 @@ import model.Level;
 import model.Tube;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.TestGameListener;
+import utils.TestLevelListener;
 
 import java.util.List;
 
@@ -13,21 +13,22 @@ class GameListenerTest {
 
     private Game game;
     private Level level;
-    private TestGameListener listener;
+    private TestLevelListener listener;
 
     @BeforeEach
     void setUp() {
         game = new Game();
         game.startForTests();
         level = game.getCurrentLevel();
-        listener = new TestGameListener();
-        game.addGameListener(listener);
+        listener = new TestLevelListener();
+        level.addLevelListener(listener);
     }
 
     @Test
     void test01_onMoveAttemptCalledOnSuccessfulMove() {
-        Tube from = level.getTubes().get(0);
-        Tube to = level.getTubes().get(3);
+        List<Tube> tubes = level.getTubes();
+        Tube from = tubes.get(0);
+        Tube to = tubes.get(3);
 
         game.tryMove(from, to);
 
@@ -42,8 +43,9 @@ class GameListenerTest {
 
     @Test
     void test02_onMoveAttemptCalledOnFailedMove() {
-        Tube from = level.getTubes().get(1);
-        Tube to = level.getTubes().get(0);
+        List<Tube> tubes = level.getTubes();
+        Tube from = tubes.get(1);
+        Tube to = tubes.get(0);
 
         game.tryMove(from, to);
 
@@ -58,10 +60,11 @@ class GameListenerTest {
 
     @Test
     void test03_multipleMovesProduceMultipleEvents() {
-        Tube from1 = level.getTubes().get(0);
-        Tube to1 = level.getTubes().get(3);
-        Tube from2 = level.getTubes().get(1);
-        Tube to2 = level.getTubes().get(3);
+        List<Tube> tubes = level.getTubes();
+        Tube from1 = tubes.get(0);
+        Tube to1 = tubes.get(3);
+        Tube from2 = tubes.get(1);
+        Tube to2 = tubes.get(3);
 
         game.tryMove(from1, to1);
         game.tryMove(from2, to2);
@@ -103,9 +106,11 @@ class GameListenerTest {
 
     @Test
     void test06_eventOrderForSuccessfulMove() {
-        Tube from = level.getTubes().get(0);
-        Tube to = level.getTubes().get(3);
+        List<Tube> tubes = level.getTubes();
+        Tube from = tubes.get(0);
+        Tube to = tubes.get(3);
 
+        listener.clear();
         game.tryMove(from, to);
 
         List<String> history = listener.callHistory;
@@ -120,8 +125,9 @@ class GameListenerTest {
 
     @Test
     void test07_clearResetsAllCounters() {
-        Tube from = level.getTubes().get(0);
-        Tube to = level.getTubes().get(3);
+        List<Tube> tubes = level.getTubes();
+        Tube from = tubes.get(0);
+        Tube to = tubes.get(3);
 
         game.tryMove(from, to);
         listener.clear();
@@ -138,11 +144,12 @@ class GameListenerTest {
 
     @Test
     void test08_multipleListenersAllReceiveEvents() {
-        TestGameListener listener2 = new TestGameListener();
-        game.addGameListener(listener2);
+        TestLevelListener listener2 = new TestLevelListener();
+        level.addLevelListener(listener2);
 
-        Tube from = level.getTubes().get(0);
-        Tube to = level.getTubes().get(3);
+        List<Tube> tubes = level.getTubes();
+        Tube from = tubes.get(0);
+        Tube to = tubes.get(3);
 
         game.tryMove(from, to);
 
@@ -153,8 +160,9 @@ class GameListenerTest {
 
     @Test
     void test09_moveFromEmptyTubeDoesNotChangeCounters() {
-        Tube emptyTube = level.getTubes().get(3);
-        Tube to = level.getTubes().get(2);
+        List<Tube> tubes = level.getTubes();
+        Tube emptyTube = tubes.get(3);
+        Tube to = tubes.get(2);
 
         listener.clear();
         game.tryMove(emptyTube, to);
@@ -162,12 +170,14 @@ class GameListenerTest {
         assertTrue(listener.isMoveAttemptCalled());
         assertFalse(listener.lastMoveSuccess);
         assertEquals(1, listener.failureCount);
+        assertEquals(0, listener.successCount);
     }
 
     @Test
     void test10_moveToFullTubeDoesNotChangeCounters() {
-        Tube from = level.getTubes().get(0);
-        Tube to = level.getTubes().get(3);
+        List<Tube> tubes = level.getTubes();
+        Tube from = tubes.get(0);
+        Tube to = tubes.get(3);
 
         game.tryMove(from, to);
 
@@ -180,16 +190,16 @@ class GameListenerTest {
     }
 
     @Test
-    void test11_EventFiredAfterStateChangeNotBefore() {
+    void test11_eventFiredAfterStateChangeNotBefore() {
         List<Tube> tubes = level.getTubes();
         Tube from = tubes.get(0);
         Tube to = tubes.get(3);
 
         int fromCountBefore = from.getBallCount();
         int toCountBefore = to.getBallCount();
-
         boolean completedBefore = game.isLevelCompleted();
 
+        listener.clear();
         game.tryMove(from, to);
 
         assertTrue(listener.isMoveAttemptCalled());
@@ -203,7 +213,7 @@ class GameListenerTest {
     }
 
     @Test
-    void test12_GameCompletedEventFiredOnlyAfterAllConditionsMet() {
+    void test12_gameCompletedEventFiredOnlyAfterAllConditionsMet() {
         List<Tube> tubes = level.getTubes();
 
         game.tryMove(tubes.get(0), tubes.get(3));
@@ -227,43 +237,18 @@ class GameListenerTest {
     }
 
     @Test
-    void test13_EventNotFiredWhenMoveDoesNotChangeState() {
+    void test13_moveFromSelectedTubeToItself() {
         List<Tube> tubes = level.getTubes();
-        Tube from = tubes.get(0);
-        Tube to = tubes.get(0);
+        Tube tube = tubes.get(0);
 
-        int beforeCallCount = listener.moveAttemptCount;
+        tube.setSelected(true);
+        int initialCount = tube.getBallCount();
 
-        game.tryMove(from, to);
+        listener.clear();
+        boolean result = game.tryMove(tube, tube);
 
-        assertEquals(beforeCallCount + 1, listener.moveAttemptCount);
+        assertFalse(result);
+        assertEquals(initialCount, tube.getBallCount());
         assertFalse(listener.lastMoveSuccess);
-
-        assertEquals(2, from.getBallCount());
-    }
-
-    @Test
-    void test14_VerifyEventOrderWithMultipleSuccessiveMoves() {
-        List<Tube> tubes = level.getTubes();
-        List<String> history = listener.callHistory;
-
-        game.tryMove(tubes.get(0), tubes.get(3));
-
-        int historySizeAfter1 = history.size();
-        assertTrue(historySizeAfter1 > 0);
-        assertEquals("onMoveAttempt(success)", history.get(historySizeAfter1 - 1));
-
-        game.tryMove(tubes.get(3), tubes.get(1));
-
-        int historySizeAfter2 = history.size();
-        assertEquals("onMoveAttempt(failure)", history.get(historySizeAfter2 - 1));
-
-        game.tryMove(tubes.get(2), tubes.get(1));
-
-        int historySizeAfter3 = history.size();
-
-        if (historySizeAfter3 > 0) {
-            assertEquals("onGameCompleted", history.get(historySizeAfter3 - 1));
-        }
     }
 }

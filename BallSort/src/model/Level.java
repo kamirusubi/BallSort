@@ -1,8 +1,7 @@
 package model;
 
-import rules.*;
-import view.TubeWidget;
-
+import game.LevelListener;
+import rules.SequenceRule;
 import java.util.*;
 
 public class Level implements TubeSelectionListener {
@@ -12,6 +11,7 @@ public class Level implements TubeSelectionListener {
     private final SequenceRule  _rules;
     private Tube _selectedTube = null;
     private final List<TubeSelectionListener> _tubeSelectionListeners = new ArrayList<>();
+    private final List<LevelListener> _levelListeners = new ArrayList<>();
 
     public Level(List<Tube> tubes, SequenceRule rules) {
         _originalTubes = tubes;
@@ -51,23 +51,55 @@ public class Level implements TubeSelectionListener {
     }
 
     public boolean executeMove(Tube from, Tube to) {
+        from.setSelected(false);
+        to.setSelected(false);
+
         if (!_tubes.contains(from) || !_tubes.contains(to)) {
+            notifyMoveAttempt(false, from, to);
             return false;
         }
 
         int movedCount = from.moveTo(to, _rules);
-        return movedCount > 0;
+        boolean success = movedCount > 0;
+
+        notifyMoveAttempt(success, from, to);
+
+        if (success && isLevelCompleted()) {
+            notifyLevelCompleted();
+        }
+
+        return success;
     }
 
     public boolean isLevelCompleted() {
         for (Tube tube : _tubes) {
             if (!tube.isEmpty()) {
-                if (!isTubeUniform(tube, _rules) || tube.hasSpace()) {
+                if (!isTubeUniform(tube) || tube.hasSpace()) {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    public void addLevelListener(LevelListener listener) {
+        _levelListeners.add(listener);
+    }
+
+    public void removeLevelListener(LevelListener listener) {
+        _levelListeners.remove(listener);
+    }
+
+    private void notifyMoveAttempt(boolean success, Tube from, Tube to) {
+        for (LevelListener listener : _levelListeners) {
+            listener.onMoveAttempt(success, from, to);
+        }
+    }
+
+    private void notifyLevelCompleted() {
+        for (LevelListener listener : _levelListeners) {
+            listener.onGameCompleted();
+        }
     }
 
     public void addTubeSelectionListener(TubeSelectionListener listener) {
@@ -78,13 +110,13 @@ public class Level implements TubeSelectionListener {
         _tubeSelectionListeners.remove(listener);
     }
 
-    private boolean isTubeUniform(Tube tube, SequenceRule rules) {
+    private boolean isTubeUniform(Tube tube) {
         if (tube.isEmpty() || tube.getBallCount() == 1) return true;
 
         List<Ball> balls = tube.getBalls();
 
         for (int i = 0; i < balls.size() - 1; i++) {
-            if (!rules.canStack(balls.get(i + 1), balls.get(i))) return false;
+            if (!_rules.canStack(balls.get(i + 1), balls.get(i))) return false;
         }
 
         return true;
@@ -103,14 +135,8 @@ public class Level implements TubeSelectionListener {
                 _selectedTube.setSelected(false);
                 _selectedTube = null;
             } else { // если отличается от первой
-                notifyMoveAttempt(_selectedTube, tube);
+                executeMove(_selectedTube, tube);
             }
-        }
-    }
-
-    private void notifyMoveAttempt(Tube from, Tube to) {
-        for (TubeSelectionListener listener : _tubeSelectionListeners) {
-            listener.onTwoTubesSelected(from, to);
         }
     }
 
@@ -135,10 +161,5 @@ public class Level implements TubeSelectionListener {
     public void onFirstTubeDeselected(Tube tube) {
         _selectedTube = null;
         notifyFirstTubeDeselected(tube);
-    }
-
-    @Override
-    public void onTwoTubesSelected(Tube from, Tube to) {
-        // Не используется в Level
     }
 }

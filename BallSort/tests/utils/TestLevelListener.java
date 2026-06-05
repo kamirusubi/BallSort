@@ -1,11 +1,11 @@
 package utils;
-import game.GameListener;
-import model.Tube;
 
+import game.LevelListener;
+import model.Tube;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TestGameListener implements GameListener {
+public class TestLevelListener implements LevelListener {
     public int moveAttemptCount = 0;
     public int successCount = 0;
     public int failureCount = 0;

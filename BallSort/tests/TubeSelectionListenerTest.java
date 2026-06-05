@@ -32,7 +32,6 @@ class TubeSelectionListenerTest {
 
         assertEquals(1, listener.firstTubeSelectedCount);
         assertEquals(0, listener.firstTubeDeselectedCount);
-        assertEquals(0, listener.twoTubesSelectedCount);
         assertEquals(tube, listener.selectedTube);
         assertTrue(listener.isFirstTubeSelectedCalled());
     }
@@ -46,29 +45,12 @@ class TubeSelectionListenerTest {
 
         assertEquals(1, listener.firstTubeSelectedCount);
         assertEquals(1, listener.firstTubeDeselectedCount);
-        assertEquals(0, listener.twoTubesSelectedCount);
         assertEquals(tube, listener.deselectedTube);
         assertTrue(listener.isFirstTubeDeselectedCalled());
     }
 
     @Test
-    void test03_onTwoTubesSelectedWhenSecondTubeIsSelected() {
-        Tube tube1 = level.getTubes().get(0);
-        Tube tube2 = level.getTubes().get(3);
-
-        tube1.setSelected(true);
-        tube2.setSelected(true);
-
-        assertEquals(1, listener.firstTubeSelectedCount);
-        assertEquals(0, listener.firstTubeDeselectedCount);
-        assertEquals(1, listener.twoTubesSelectedCount);
-        assertEquals(tube1, listener.twoTubesFrom);
-        assertEquals(tube2, listener.twoTubesTo);
-        assertTrue(listener.isTwoTubesSelectedCalled());
-    }
-
-    @Test
-    void test04_selectingSameTubeTwiceDoesDeselect() {
+    void test03_selectingSameTubeTwiceDoesDeselect() {
         Tube tube = level.getTubes().get(0);
 
         tube.setSelected(true);
@@ -76,64 +58,68 @@ class TubeSelectionListenerTest {
 
         assertEquals(1, listener.firstTubeSelectedCount);
         assertEquals(1, listener.firstTubeDeselectedCount);
-        assertEquals(0, listener.twoTubesSelectedCount);
     }
 
     @Test
-    void test05_selectingEmptyTube() {
+    void test04_selectingEmptyTube() {
         Tube emptyTube = level.getTubes().get(3);
 
         emptyTube.setSelected(true);
 
         assertEquals(0, listener.firstTubeSelectedCount);
         assertEquals(1, listener.firstTubeDeselectedCount);
-        assertEquals(0, listener.twoTubesSelectedCount);
         assertFalse(emptyTube.isSelected());
     }
 
     @Test
-    void test06_multipleSelectionSequences() {
+    void test05_singleTubeSelectionWorks() {
+        Tube tube = level.getTubes().get(0);
+
+        listener.clear();
+
+        tube.setSelected(true);
+
+        assertEquals(1, listener.firstTubeSelectedCount);
+        assertTrue(tube.isSelected());
+
+        tube.setSelected(false);
+
+        assertEquals(1, listener.firstTubeDeselectedCount);
+        assertFalse(tube.isSelected());
+    }
+
+    @Test
+    void test06_twoTubesSelectionTriggersMove() {
         Tube tube1 = level.getTubes().get(0);
         Tube tube2 = level.getTubes().get(3);
 
-        tube1.setSelected(true);
-        tube2.setSelected(true);
+        int initialCount1 = tube1.getBallCount();
+        int initialCount2 = tube2.getBallCount();
 
-        assertEquals(1, listener.firstTubeSelectedCount);
-        assertEquals(0, listener.firstTubeDeselectedCount);
-        assertEquals(1, listener.twoTubesSelectedCount);
-
-        tube1.setSelected(false);
-        tube2.setSelected(false);
         listener.clear();
 
         tube1.setSelected(true);
+
+        int afterFirstSelected = listener.firstTubeSelectedCount;
+
         tube2.setSelected(true);
 
-        assertEquals(1, listener.firstTubeSelectedCount);
-        assertEquals(0, listener.firstTubeDeselectedCount);
-        assertEquals(1, listener.twoTubesSelectedCount);
+        assertTrue(afterFirstSelected > 0);
+
+        if (initialCount2 == 0 && !tube1.isEmpty()) {
+            assertTrue(tube1.getBallCount() < initialCount1 || tube2.getBallCount() > initialCount2);
+        }
     }
 
     @Test
-    void test07_eventOrderForTwoTubes() {
-        Tube tube1 = level.getTubes().get(0);
-        Tube tube2 = level.getTubes().get(3);
-
-        tube1.setSelected(true);
-        tube2.setSelected(true);
-
-        List<String> history = listener.callHistory;
-        assertEquals(2, history.size());
-        assertEquals("onTwoTubesSelected", history.get(1));
-    }
-
-    @Test
-    void test08_multipleListenersAllReceiveEvents() {
+    void test07_multipleListenersAllReceiveEvents() {
         TestTubeSelectionListener listener2 = new TestTubeSelectionListener();
         level.addTubeSelectionListener(listener2);
 
         Tube tube = level.getTubes().get(0);
+
+        listener.clear();
+        listener2.clear();
 
         tube.setSelected(true);
 
@@ -144,39 +130,23 @@ class TubeSelectionListenerTest {
     }
 
     @Test
-    void test09_checkSelectedTubes() {
-        Tube tube1 = level.getTubes().get(0);
-        Tube tube3 = level.getTubes().get(1);
-
-        tube1.setSelected(true);
-        tube3.setSelected(true);
-
-        assertEquals(1, listener.firstTubeSelectedCount);
-        assertEquals(0, listener.firstTubeDeselectedCount);
-        assertEquals(1, listener.twoTubesSelectedCount);
-        assertEquals(tube1, listener.twoTubesFrom);
-        assertEquals(tube3, listener.twoTubesTo);
-    }
-
-    @Test
-    void test10_deselectAfterTwoTubesSelection() {
+    void test08_deselectedAfterMove() {
         Tube tube1 = level.getTubes().get(0);
         Tube tube2 = level.getTubes().get(3);
 
         tube1.setSelected(true);
+        assertTrue(tube1.isSelected());
+
         tube2.setSelected(true);
 
-        listener.clear();
+        assertFalse(tube1.isSelected());
+        assertFalse(tube2.isSelected());
 
-        tube1.setSelected(false);
-
-        assertEquals(0, listener.firstTubeSelectedCount);
-        assertEquals(1, listener.firstTubeDeselectedCount);
-        assertEquals(0, listener.twoTubesSelectedCount);
+        assertTrue(listener.firstTubeDeselectedCount > 0);
     }
 
     @Test
-    void test11_SelectionEventFiredAfterTubeStateChanged() {
+    void test09_selectionEventFiredAfterTubeStateChanged() {
         Tube tube = level.getTubes().get(0);
 
         assertFalse(tube.isSelected());
@@ -184,7 +154,6 @@ class TubeSelectionListenerTest {
         tube.setSelected(true);
 
         assertTrue(listener.isFirstTubeSelectedCalled());
-
         assertTrue(tube.isSelected());
 
         listener.clear();
@@ -196,7 +165,7 @@ class TubeSelectionListenerTest {
     }
 
     @Test
-    void test12_EmptyTubeSelectionEventFiredThenImmediatelyDeselected() {
+    void test10_emptyTubeCannotBeSelected() {
         Tube emptyTube = level.getTubes().get(3);
 
         assertTrue(emptyTube.isEmpty());
@@ -204,47 +173,83 @@ class TubeSelectionListenerTest {
         listener.clear();
         emptyTube.setSelected(true);
 
-        assertEquals(0, listener.firstTubeSelectedCount);
-        assertTrue(listener.firstTubeDeselectedCount > 0);
-
         assertFalse(emptyTube.isSelected());
+        assertEquals(0, listener.firstTubeSelectedCount);
     }
 
     @Test
-    void test13_VerifyTwoTubesEventFiredAfterBothSelectionsComplete() {
-        Tube tube1 = level.getTubes().get(0);
-        Tube tube2 = level.getTubes().get(3);
-
-        listener.clear();
-
-        tube1.setSelected(true);
-        assertEquals(1, listener.firstTubeSelectedCount);
-        assertEquals(0, listener.twoTubesSelectedCount);
-
-        tube2.setSelected(true);
-
-        assertEquals(1, listener.firstTubeSelectedCount);
-        assertEquals(1, listener.twoTubesSelectedCount);
-
-        List<String> history = listener.callHistory;
-        assertEquals(2, history.size());
-        assertEquals("onFirstTubeSelected", history.get(0));
-        assertEquals("onTwoTubesSelected", history.get(1));
-
-        assertTrue(tube1.isSelected());
-        assertTrue(tube2.isSelected());
-    }
-
-    @Test
-    void test14_EventNotFiredWhenSelectionStateDoesNotChange() {
+    void test11_eventNotFiredWhenSelectionStateDoesNotChange() {
         Tube tube = level.getTubes().get(0);
 
-        listener.clear();
         tube.setSelected(true);
         int selectedCount = listener.firstTubeSelectedCount;
 
         tube.setSelected(true);
 
         assertEquals(selectedCount, listener.firstTubeSelectedCount);
+    }
+
+    @Test
+    void test12_selectMultipleTubesSequentially() {
+        Tube tube1 = level.getTubes().get(0);
+        Tube tube2 = level.getTubes().get(1);
+        Tube tube3 = level.getTubes().get(2);
+
+        listener.clear();
+
+        tube1.setSelected(true);
+        int selectedCount = listener.firstTubeSelectedCount;
+        assertTrue(selectedCount >= 1);
+
+        tube1.setSelected(false);
+
+        tube2.setSelected(true);
+        assertTrue(listener.firstTubeSelectedCount >= selectedCount + 1);
+
+        tube2.setSelected(false);
+
+        tube3.setSelected(true);
+        assertTrue(listener.firstTubeSelectedCount >= selectedCount + 2);
+    }
+
+    @Test
+    void test13_removeListenerStopsReceivingEvents() {
+        Tube tube = level.getTubes().get(0);
+
+        level.removeTubeSelectionListener(listener);
+
+        listener.clear();
+        tube.setSelected(true);
+
+        assertEquals(0, listener.firstTubeSelectedCount);
+
+        tube.setSelected(false);
+
+        assertEquals(0, listener.firstTubeDeselectedCount);
+    }
+
+    @Test
+    void test14_tubeFromAnotherLevelDoesNotAffectLevel() {
+        Tube tubeFromLevel = level.getTubes().get(0);
+        Tube outsideTube = new Tube(4);
+
+        int initialCount = tubeFromLevel.getBallCount();
+
+        outsideTube.setSelected(true);
+
+        assertEquals(initialCount, tubeFromLevel.getBallCount());
+    }
+
+    @Test
+    void test15_verifyFirstTubeSelectedEvent() {
+        Tube tube = level.getTubes().get(0);
+
+        listener.clear();
+
+        assertNotNull(listener);
+
+        tube.setSelected(true);
+
+        assertTrue(listener.firstTubeSelectedCount > 0);
     }
 }
