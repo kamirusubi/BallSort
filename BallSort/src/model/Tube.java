@@ -10,24 +10,24 @@ public class Tube {
     private boolean _isSelected = false;
     private List<TubeSelectionListener> _listeners = new ArrayList<>();
     private final SequenceRule  _rules;
+    private final List<Ball> _originalBalls = new ArrayList<>();
 
-    public Tube(int capacity, SequenceRule  rules) {
+    public Tube(int capacity, SequenceRule rules) {
         _capacity = capacity;
         _rules = rules;
     }
 
-    public Tube(int capacity, List<Ball> initialBalls, SequenceRule  rules) {
+    public Tube(int capacity, List<Ball> initialBalls, SequenceRule rules) {
         this(capacity, rules);
         if (initialBalls.size() > capacity) {
             throw new IllegalArgumentException("Too many balls for tube capacity");
         }
+        _originalBalls.addAll(initialBalls);
         fill(initialBalls);
     }
 
     public int moveTo(Tube target) {
-        if (!canMoveTo(target)) {
-            return 0;
-        }
+        if (!canMoveTo(target))  return 0;
 
         List<Ball> ballsToMove = peekSequence();
 
@@ -144,6 +144,11 @@ public class Tube {
         return true;
     }
 
+    public void reset() {
+        _balls.clear();
+        _balls.addAll(_originalBalls);
+        setSelected(false);
+    }
 
     private void fill(List<Ball> initialBalls) {
         _balls.clear();

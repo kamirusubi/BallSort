@@ -7,13 +7,15 @@ import java.util.*;
 public class Level implements TubeSelectionListener {
 
     private final List<Tube> _tubes = new ArrayList<>();
-    private final List<Tube> _originalTubes;
     private Tube _selectedTube = null;
     private final List<TubeSelectionListener> _tubeSelectionListeners = new ArrayList<>();
     private final List<LevelListener> _levelListeners = new ArrayList<>();
 
     public Level(List<Tube> tubes, SequenceRule rules) {
-        _originalTubes = tubes;
+        if (tubes == null || tubes.size() < 2) {
+            throw new IllegalArgumentException("Level requires at least 2 tubes");
+        }
+
         for (Tube tube : tubes) {
             _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls()), rules));
         }
@@ -24,19 +26,8 @@ public class Level implements TubeSelectionListener {
     }
 
     public void reset() {
-        if (_originalTubes == null || _originalTubes.isEmpty()) {
-            return;
-        }
-
-        SequenceRule rules = _originalTubes.get(0).getRules();
-
-        _tubes.clear();
-        for (Tube tube : _originalTubes) {
-            _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls()), rules));
-        }
-
-        for (Tube newTube : _tubes) {
-            newTube.addSelectionListener(this);
+        for (Tube tube : _tubes) {
+            tube.reset();
         }
 
         if (_selectedTube != null) {
