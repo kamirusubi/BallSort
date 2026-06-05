@@ -28,9 +28,9 @@ public class LevelView extends JPanel implements TubeSelectionListener, LevelLis
         }
     });
 
-    public LevelView(Level level, Game game) {
+    public LevelView(Game game) {
         _game = game;
-        _level = level;
+        _level = _game.getCurrentLevel();
 
         _level.addTubeSelectionListener(this);
         _level.addLevelListener(this);

@@ -22,7 +22,7 @@ public class GameFrame extends JFrame {
         JPanel buttonPanel = getJPanel();
         mainPanel.add(buttonPanel);
 
-        _levelView = new LevelView(_game.getCurrentLevel(), _game);
+        _levelView = new LevelView(_game);
         mainPanel.add(_levelView);
 
         add(mainPanel);

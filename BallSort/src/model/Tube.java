@@ -22,7 +22,7 @@ public class Tube {
         fill(initialBalls);
     }
 
-        public int moveTo(Tube target, SequenceRule rules) {
+    public int moveTo(Tube target, SequenceRule rules) {
         if (!canMoveTo(target, rules)) {
             return 0;
         }
@@ -68,6 +68,7 @@ public class Tube {
                 result.add(currentBall);
             }
         }
+
 
         return result;
     }

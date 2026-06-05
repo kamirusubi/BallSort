@@ -76,7 +76,7 @@ class ViewTest {
 
     @Test
     void test05_LevelViewCreation() {
-        LevelView levelView = new LevelView(level, game);
+        LevelView levelView = new LevelView(game);
 
         assertNotNull(levelView);
         assertEquals(Color.DARK_GRAY, levelView.getBackground());
@@ -85,7 +85,7 @@ class ViewTest {
 
     @Test
     void test06_LevelViewUpdateLevel() {
-        LevelView levelView = new LevelView(level, game);
+        LevelView levelView = new LevelView(game);
         Level newLevel = game.getCurrentLevel();
 
         assertDoesNotThrow(() -> levelView.updateLevel(newLevel));
@@ -93,14 +93,14 @@ class ViewTest {
 
     @Test
     void test7_LevelViewRepaint() {
-        LevelView levelView = new LevelView(level, game);
+        LevelView levelView = new LevelView(game);
 
         assertDoesNotThrow(() -> levelView.repaint());
     }
 
     @Test
     void test9_LevelViewMultipleUpdates() {
-        LevelView levelView = new LevelView(level, game);
+        LevelView levelView = new LevelView(game);
 
         assertDoesNotThrow(() -> {
             levelView.updateLevel(level);
