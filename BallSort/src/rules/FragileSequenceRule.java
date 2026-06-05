@@ -8,9 +8,7 @@ public class FragileSequenceRule implements SequenceRule {
     public boolean canStack(Ball topBall, Ball bottomBall) {
         if (bottomBall != null) {
             FragileProperty bottomFragile = bottomBall.getProperty(FragileProperty.class);
-            if (bottomFragile != null) {
-                return false;
-            }
+            return bottomFragile == null;
         }
 
         return true;

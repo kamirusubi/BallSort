@@ -21,11 +21,6 @@ public class Game {
         return _level != null ? _level.getRules() : null;
     }
 
-    public boolean tryMove(Tube from, Tube to) {
-
-        return _level.executeMove(from, to);
-    }
-
     public boolean isLevelCompleted() {
         return _level != null && _level.isLevelCompleted();
     }
