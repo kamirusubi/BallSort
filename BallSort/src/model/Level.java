@@ -51,18 +51,12 @@ public class Level implements TubeSelectionListener {
     }
 
     public boolean executeMove(Tube from, Tube to) {
-        if (from.isEmpty() || !to.hasSpace()) return false;
-        if (!_tubes.contains(from) || !_tubes.contains(to)) return false;
-        if(!_rules.canStack(from.peekOne(), to.peekOne())) return false;
-
-        List<Ball> ballsToMove = from.peekSequence(_rules);
-        for (Ball ball : ballsToMove) {
-            if(to.hasSpace()){
-                to.pushOne(from.popOne());
-            }
+        if (!_tubes.contains(from) || !_tubes.contains(to)) {
+            return false;
         }
 
-        return true;
+        int movedCount = from.moveTo(to, _rules);
+        return movedCount > 0;
     }
 
     public boolean isLevelCompleted() {

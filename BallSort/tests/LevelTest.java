@@ -184,9 +184,8 @@ class LevelTest {
     void test13_ExecuteMoveWithNullParameters() {
         Tube validTube = tubes.get(0);
 
-        assertThrows(NullPointerException.class, () -> level.executeMove(null, validTube));
-
-        assertThrows(NullPointerException.class, () -> level.executeMove(validTube, null));
+        assertFalse(level.executeMove(null, validTube));
+        assertFalse(level.executeMove(validTube, null));
     }
 
     @Test

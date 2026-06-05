@@ -22,6 +22,24 @@ public class Tube {
         fill(initialBalls);
     }
 
+        public int moveTo(Tube target, SequenceRule rules) {
+        if (!canMoveTo(target, rules)) {
+            return 0;
+        }
+
+        List<Ball> ballsToMove = peekSequence(rules);
+
+        int spaceAvailable = target.getCapacity() - target.getBallCount();
+        int ballsToMoveCount = Math.min(ballsToMove.size(), spaceAvailable);
+
+        for (int i = 0; i < ballsToMoveCount; i++) {
+            Ball ball = popOne();
+            target.pushOne(ball);
+        }
+
+        return ballsToMoveCount;
+    }
+
     public Ball peekOne(){
         if (_balls.isEmpty()) {
             return null;
@@ -114,6 +132,21 @@ public class Tube {
     private void fill(List<Ball> initialBalls) {
         _balls.clear();
         _balls.addAll(initialBalls);
+    }
+
+    private boolean canMoveTo(Tube target, SequenceRule rules) {
+        if (isEmpty()) {
+            return false;
+        }
+
+        if (!target.hasSpace()) {
+            return false;
+        }
+
+        Ball myTopBall = peekOne();
+        Ball targetTopBall = target.peekOne();
+
+        return rules.canStack(myTopBall, targetTopBall);
     }
 
     private void notifySelectionChanged() {
