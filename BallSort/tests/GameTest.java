@@ -1,12 +1,7 @@
 import game.Game;
 import model.Level;
-import model.Tube;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import rules.CompositeSequenceRule;
-import rules.SequenceRule;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,5 +35,17 @@ class GameTest {
     void test03_GetCurrentLevel() {
         assertNotNull(game.getCurrentLevel());
         assertInstanceOf(Level.class, game.getCurrentLevel());
+    }
+
+    @Test
+    void test04_IsLevelCompletedInitiallyFalse() {
+        assertFalse(game.isLevelCompleted());
+    }
+
+    @Test
+    void test05_StartRandomLevel() {
+        Game newGame = new Game();
+        newGame.start();
+        assertNotNull(newGame.getCurrentLevel());
     }
 }

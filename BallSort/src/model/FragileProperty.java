@@ -9,6 +9,6 @@ public class FragileProperty extends BallProperty {
 
     @Override
     protected boolean equalsSpecific(BallProperty other) {
-        return true;
+        return other instanceof FragileProperty;
     }
 }

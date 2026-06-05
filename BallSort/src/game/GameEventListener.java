@@ -4,7 +4,7 @@ import model.Tube;
 
 public interface GameEventListener {
 
-    void onTubeSelected(Tube tube);
+    void onTubeSelected(Tube tube, int liftedCount);
 
     void onTubeDeselected(Tube tube);
 

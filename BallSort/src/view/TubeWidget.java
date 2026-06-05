@@ -1,12 +1,13 @@
+// TubeWidget.java - изменённая версия
 package view;
 
 import model.Tube;
 import model.Ball;
+import model.ColorProperty;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
-import java.util.Collections;
 
 public class TubeWidget extends JPanel {
 
@@ -20,7 +21,7 @@ public class TubeWidget extends JPanel {
     private final Tube _tube;
     private boolean _isSelected = false;
     private boolean _hasError = false;
-    private List<Ball> _liftedBalls = Collections.emptyList();
+    private int _liftedCount = 0;
 
     public TubeWidget(Tube tube) {
         _tube = tube;
@@ -52,8 +53,8 @@ public class TubeWidget extends JPanel {
         }
     }
 
-    public void setLiftedBalls(List<Ball> liftedBalls) {
-        _liftedBalls = liftedBalls != null ? liftedBalls : Collections.emptyList();
+    public void setLiftedCount(int count) {
+        _liftedCount = Math.max(0, count);
         repaint();
     }
 
@@ -82,15 +83,31 @@ public class TubeWidget extends JPanel {
 
         for (int i = 0; i < balls.size(); i++) {
             Ball ball = balls.get(i);
-            BallWidget widget = new BallWidget(ball);
 
-            boolean isLifted = _isSelected && _liftedBalls.contains(ball);
-            widget.setLifted(isLifted);
+            boolean isLifted = _isSelected && (balls.size() - 1 - i) < _liftedCount;
 
             int y = startY - (i + 1) * BallWidget.BALL_DIAMETER;
+            if (isLifted) {
+                y -= 10;
+            }
+
             int x = (TUBE_WIDTH - BallWidget.BALL_DIAMETER) / 2;
 
-            widget.draw(g, x, y);
+            ColorProperty colorProp = ball.getProperty(ColorProperty.class);
+            Color ballColor = colorProp != null ? colorProp.getColor() : Color.GRAY;
+
+            g.setColor(ballColor);
+            g.fillOval(x, y, BallWidget.BALL_DIAMETER, BallWidget.BALL_DIAMETER);
+            g.setColor(Color.BLACK);
+            g.drawOval(x, y, BallWidget.BALL_DIAMETER, BallWidget.BALL_DIAMETER);
+
+            g.setColor(Color.BLACK);
+            g.setFont(new Font("Arial", Font.BOLD, 14));
+            FontMetrics fm = g.getFontMetrics();
+            String symbol = ball.toString();
+            int symbolX = x + (BallWidget.BALL_DIAMETER - fm.stringWidth(symbol)) / 2;
+            int symbolY = y + (BallWidget.BALL_DIAMETER + fm.getAscent() - fm.getDescent()) / 2;
+            g.drawString(symbol, symbolX, symbolY);
         }
     }
 }

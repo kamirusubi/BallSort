@@ -48,28 +48,28 @@ public class Level {
         return _tubes.get(index);
     }
 
-    public void handleTubeClick(Tube clickedTube) {
-        if (!_tubes.contains(clickedTube)) {
-            notifyMoveFailed(clickedTube, clickedTube);
+    public void selectTube(Tube tube) {
+        if (!_tubes.contains(tube)) {
+            notifyMoveFailed(tube, tube);
             return;
         }
 
         if (_pendingTube == null) {
-            if (clickedTube.isEmpty()) {
+            if (tube.isEmpty()) {
                 return;
             }
-            _pendingTube = clickedTube;
-            notifyTubeSelected(clickedTube);
+            _pendingTube = tube;
+            notifyTubeSelected(tube);
             return;
         }
 
-        if (_pendingTube == clickedTube) {
+        if (_pendingTube == tube) {
             _pendingTube = null;
-            notifyTubeDeselected(clickedTube);
+            notifyTubeDeselected(tube);
             return;
         }
 
-        executeMove(_pendingTube, clickedTube);
+        executeMove(_pendingTube, tube);
     }
 
     public Tube getPendingTube() {
@@ -139,8 +139,10 @@ public class Level {
     }
 
     private void notifyTubeSelected(Tube tube) {
+        int liftedCount = tube.peekSequence().size();
+
         for (GameEventListener listener : _listeners) {
-            listener.onTubeSelected(tube);
+            listener.onTubeSelected(tube, liftedCount);
         }
     }
 

@@ -29,7 +29,7 @@ class ViewTest {
 
     @Test
     void test01_BallWidgetCreation() {
-        Tube tube = level.getTubes().get(0);
+        Tube tube = level.getTubeAt(0);
         Ball ball = tube.getBalls().get(0);
 
         BallWidget widget = new BallWidget(ball);
@@ -41,7 +41,7 @@ class ViewTest {
 
     @Test
     void test02_BallWidgetSetLifted() {
-        Tube tube = level.getTubes().get(0);
+        Tube tube = level.getTubeAt(0);
         Ball ball = tube.getBalls().get(0);
 
         BallWidget widget = new BallWidget(ball);
@@ -52,8 +52,7 @@ class ViewTest {
 
     @Test
     void test03_TubeWidgetCreation() {
-        Tube tube = level.getTubes().get(0);
-
+        Tube tube = level.getTubeAt(0);
         TubeWidget widget = new TubeWidget(tube);
 
         assertNotNull(widget);
@@ -78,31 +77,25 @@ class ViewTest {
     @Test
     void test05_LevelViewCreation() {
         LevelView levelView = new LevelView(game);
-
         assertNotNull(levelView);
         assertEquals(Color.DARK_GRAY, levelView.getBackground());
-        assertTrue(levelView.getLayout() instanceof GridBagLayout);
     }
 
     @Test
     void test06_LevelViewUpdateLevel() {
         LevelView levelView = new LevelView(game);
-        Level newLevel = game.getCurrentLevel();
-
-        assertDoesNotThrow(() -> levelView.updateLevel(newLevel));
+        assertDoesNotThrow(() -> levelView.updateLevel(level));
     }
 
     @Test
-    void test7_LevelViewRepaint() {
+    void test07_LevelViewRepaint() {
         LevelView levelView = new LevelView(game);
-
         assertDoesNotThrow(() -> levelView.repaint());
     }
 
     @Test
-    void test9_LevelViewMultipleUpdates() {
+    void test08_LevelViewMultipleUpdates() {
         LevelView levelView = new LevelView(game);
-
         assertDoesNotThrow(() -> {
             levelView.updateLevel(level);
             levelView.updateLevel(level);

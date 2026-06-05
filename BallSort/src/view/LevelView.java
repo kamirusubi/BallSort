@@ -23,6 +23,7 @@ public class LevelView extends JPanel {
     private Timer _errorTimer;
     private Tube _errorTube = null;
     private GameEventListener _currentListener;
+    private int _liftedCount = 0;
 
     public LevelView(Game game) {
         _game = game;
@@ -44,12 +45,14 @@ public class LevelView extends JPanel {
     private void subscribeToLevel() {
         _currentListener = new GameEventListener() {
             @Override
-            public void onTubeSelected(Tube tube) {
+            public void onTubeSelected(Tube tube, int liftedCount) {
+                _liftedCount = liftedCount;
                 updateAllVisuals();
             }
 
             @Override
             public void onTubeDeselected(Tube tube) {
+                _liftedCount = 0;
                 updateAllVisuals();
             }
 
@@ -98,6 +101,11 @@ public class LevelView extends JPanel {
     }
 
     private void rebuild() {
+        if (_level == null) {
+            removeAll();
+            return;
+        }
+
         int tubeCount = _level.getTubeCount();
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -126,7 +134,7 @@ public class LevelView extends JPanel {
 
     private void onTubeClick(Tube clickedTube) {
         if (_level != null) {
-            _level.handleTubeClick(clickedTube);
+            _level.selectTube(clickedTube);
         }
     }
 
@@ -144,10 +152,9 @@ public class LevelView extends JPanel {
             widget.setSelected(tube == pendingTube);
 
             if (tube == pendingTube && pendingTube != null) {
-                List<Ball> liftedBalls = _level.getSequenceToMove(tube);
-                widget.setLiftedBalls(liftedBalls);
+                widget.setLiftedCount(_liftedCount);
             } else {
-                widget.setLiftedBalls(Collections.emptyList());
+                widget.setLiftedCount(0);
             }
 
             widget.repaint();

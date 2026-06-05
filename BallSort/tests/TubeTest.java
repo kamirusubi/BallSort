@@ -30,10 +30,10 @@ class TubeTest {
     @Test
     void test02_ConstructorWithBalls() {
         List<Ball> balls = new ArrayList<>();
-        balls.add(new Ball());
-        balls.add(new Ball());
-        balls.add(new Ball());
-        balls.add(new Ball());
+        balls.add(new Ball(new ColorProperty(Color.RED)));
+        balls.add(new Ball(new ColorProperty(Color.RED)));
+        balls.add(new Ball(new ColorProperty(Color.RED)));
+        balls.add(new Ball(new ColorProperty(Color.RED)));
 
         Tube tube = new Tube(4, balls, rule);
 
@@ -46,11 +46,9 @@ class TubeTest {
     @Test
     void test03_ConstructorWithMoreBallsThanCapacity() {
         List<Ball> balls = new ArrayList<>();
-        balls.add(new Ball());
-        balls.add(new Ball());
-        balls.add(new Ball());
-        balls.add(new Ball());
-        balls.add(new Ball());
+        for (int i = 0; i < 5; i++) {
+            balls.add(new Ball(new ColorProperty(Color.RED)));
+        }
 
         assertThrows(IllegalArgumentException.class, () -> new Tube(4, balls, rule));
     }
@@ -71,10 +69,7 @@ class TubeTest {
     @Test
     void test05_PeekOneOnEmptyTube() {
         Tube tube = new Tube(4, rule);
-
-        Ball ball = tube.peekOne();
-
-        assertNull(ball);
+        assertNull(tube.peekOne());
     }
 
     @Test
@@ -128,10 +123,7 @@ class TubeTest {
     @Test
     void test09_PopOneOnEmptyTube() {
         Tube tube = new Tube(4, rule);
-
-        Ball ball = tube.popOne();
-
-        assertNull(ball);
+        assertNull(tube.popOne());
         assertEquals(0, tube.getBallCount());
     }
 
@@ -176,51 +168,105 @@ class TubeTest {
     }
 
     @Test
-    void test13_PushSequenceWithSpaceAvailable() {
-        Tube tube = new Tube(4, rule);
-        List<Ball> balls = new ArrayList<>();
-        balls.add(new Ball(new ColorProperty(Color.RED)));
-        balls.add(new Ball(new ColorProperty(Color.RED)));
+    void test13_MoveToTransfersBalls() {
+        Tube from = new Tube(4, rule);
+        Tube to = new Tube(4, rule);
 
-        boolean result = tube.pushSequence(balls);
+        from.pushOne(new Ball(new ColorProperty(Color.RED)));
+        from.pushOne(new Ball(new ColorProperty(Color.RED)));
 
-        assertTrue(result);
-        assertEquals(2, tube.getBallCount());
-        assertEquals(Color.RED, tube.getBalls().get(0).getProperty(ColorProperty.class).getColor());
-        assertEquals(Color.RED, tube.getBalls().get(1).getProperty(ColorProperty.class).getColor());
+        int moved = from.moveTo(to);
+
+        assertEquals(2, moved);
+        assertEquals(0, from.getBallCount());
+        assertEquals(2, to.getBallCount());
     }
 
     @Test
-    void test14_PushSequenceWithoutSpace() {
-        Tube tube = new Tube(2, rule);
+    void test14_MoveToRespectsCapacity() {
+        Tube from = new Tube(4, rule);
+        Tube to = new Tube(2, rule);
+
+        from.pushOne(new Ball(new ColorProperty(Color.RED)));
+        from.pushOne(new Ball(new ColorProperty(Color.RED)));
+        from.pushOne(new Ball(new ColorProperty(Color.RED)));
+
+        int moved = from.moveTo(to);
+
+        assertEquals(2, moved);
+        assertEquals(1, from.getBallCount());
+        assertEquals(2, to.getBallCount());
+    }
+
+    @Test
+    void test15_MoveToFailsWhenColorsDontMatch() {
+        Tube from = new Tube(4, rule);
+        Tube to = new Tube(4, rule);
+
+        to.pushOne(new Ball(new ColorProperty(Color.BLUE)));
+        from.pushOne(new Ball(new ColorProperty(Color.RED)));
+
+        int moved = from.moveTo(to);
+
+        assertEquals(0, moved);
+        assertEquals(1, from.getBallCount());
+        assertEquals(1, to.getBallCount());
+    }
+
+    @Test
+    void test16_IsUniformedReturnsTrueForUniformTube() {
+        Tube tube = new Tube(4, rule);
+        tube.pushOne(new Ball(new ColorProperty(Color.RED)));
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
 
+        assertTrue(tube.isUniformed());
+    }
+
+    @Test
+    void test17_IsUniformedReturnsFalseForNonUniformTube() {
+        Tube tube = new Tube(4, rule);
+        tube.pushOne(new Ball(new ColorProperty(Color.RED)));
+        tube.pushOne(new Ball(new ColorProperty(Color.RED)));
+        tube.pushOne(new Ball(new ColorProperty(Color.BLUE)));
+
+        assertFalse(tube.isUniformed());
+    }
+
+    @Test
+    void test18_ResetRestoresOriginalBalls() {
         List<Ball> balls = new ArrayList<>();
-        balls.add(new Ball(new ColorProperty(Color.BLUE)));
-        balls.add(new Ball(new ColorProperty(Color.BLUE)));
+        balls.add(new Ball(new ColorProperty(Color.RED)));
+        balls.add(new Ball(new ColorProperty(Color.RED)));
 
-        boolean result = tube.pushSequence(balls);
+        Tube tube = new Tube(4, balls, rule);
+        tube.popOne();
 
-        assertFalse(result);
+        assertEquals(1, tube.getBallCount());
+
+        tube.reset();
+
         assertEquals(2, tube.getBallCount());
         assertEquals(Color.RED, tube.peekOne().getProperty(ColorProperty.class).getColor());
     }
 
     @Test
-    void test15_PushSequenceWithNotEnoughSpace() {
-        Tube tube = new Tube(3, rule);
+    void test19_CanStackOnTopReturnsTrueForEmptyTube() {
+        Tube tube = new Tube(4, rule);
+        assertTrue(tube.canStackOnTop(new Ball(new ColorProperty(Color.RED))));
+    }
+
+    @Test
+    void test20_CanStackOnTopReturnsTrueForMatchingBalls() {
+        Tube tube = new Tube(4, rule);
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
+        assertTrue(tube.canStackOnTop(new Ball(new ColorProperty(Color.RED))));
+    }
+
+    @Test
+    void test21_CanStackOnTopReturnsFalseForNonMatchingBalls() {
+        Tube tube = new Tube(4, rule);
         tube.pushOne(new Ball(new ColorProperty(Color.RED)));
-
-        List<Ball> balls = new ArrayList<>();
-        balls.add(new Ball(new ColorProperty(Color.BLUE)));
-        balls.add(new Ball(new ColorProperty(Color.BLUE)));
-
-        boolean result = tube.pushSequence(balls);
-
-        assertTrue(result);
-        assertEquals(3, tube.getBallCount());
-        assertEquals(Color.BLUE, tube.peekOne().getProperty(ColorProperty.class).getColor());
+        assertFalse(tube.canStackOnTop(new Ball(new ColorProperty(Color.BLUE))));
     }
 }
