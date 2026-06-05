@@ -77,7 +77,7 @@ public class TubeWidget extends JPanel {
 
         List<Ball> balls = _tube.getBalls();
 
-        List<Ball> liftedBalls = _tube.isSelected() ? _tube.peekSequence(_rules) : java.util.Collections.emptyList();
+        List<Ball> liftedBalls = _tube.isSelected() ? _tube.peekSequence() : java.util.Collections.emptyList();
 
         for (int i = 0; i < balls.size(); i++) {
             Ball ball = balls.get(i);

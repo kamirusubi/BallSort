@@ -3,6 +3,7 @@ import model.Level;
 import model.Tube;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import rules.SequenceRule;
 import utils.TestTubeSelectionListener;
 
 import java.util.List;
@@ -231,7 +232,8 @@ class TubeSelectionListenerTest {
     @Test
     void test14_tubeFromAnotherLevelDoesNotAffectLevel() {
         Tube tubeFromLevel = level.getTubes().get(0);
-        Tube outsideTube = new Tube(4);
+        SequenceRule rule = level.getRules();
+        Tube outsideTube = new Tube(4, rule);
 
         int initialCount = tubeFromLevel.getBallCount();
 
@@ -239,6 +241,7 @@ class TubeSelectionListenerTest {
 
         assertEquals(initialCount, tubeFromLevel.getBallCount());
     }
+
 
     @Test
     void test15_verifyFirstTubeSelectedEvent() {

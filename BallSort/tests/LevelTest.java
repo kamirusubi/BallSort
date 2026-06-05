@@ -51,7 +51,7 @@ class LevelTest {
     void test03_GetTubesReturnsUnmodifiableList() {
         List<Tube> tubesList = level.getTubes();
 
-        assertThrows(UnsupportedOperationException.class, () -> tubesList.add(new Tube(4)));
+        assertThrows(UnsupportedOperationException.class, () -> tubesList.add(new Tube(4, rule)));
     }
 
     @Test
@@ -80,7 +80,7 @@ class LevelTest {
         int fromInitialCount = from.getBallCount();
         int toInitialCount = to.getBallCount();
 
-        List<Ball> ballsToMove = from.peekSequence(rule);
+        List<Ball> ballsToMove = from.peekSequence();
         int expectedMoveCount = ballsToMove.size();
 
         boolean result = level.executeMove(from, to);
@@ -201,12 +201,11 @@ class LevelTest {
         assertFalse(to.isSelected());
     }
 
-
     @Test
     void test15_IsLevelCompletedWithEmptyTubes() {
         List<Tube> customTubes = List.of(
-                new Tube(4),
-                new Tube(4)
+                new Tube(4, rule),
+                new Tube(4, rule)
         );
         Level emptyLevel = new Level(customTubes, rule);
 
@@ -304,7 +303,7 @@ class LevelTest {
     @Test
     void test21_ExecuteMoveWithTubeNotInLevel() {
         Tube validTube = tubes.get(0);
-        Tube outsideTube = new Tube(4);
+        Tube outsideTube = new Tube(4, rule);
 
         boolean result = level.executeMove(validTube, outsideTube);
 

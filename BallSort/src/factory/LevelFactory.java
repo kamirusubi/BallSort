@@ -1,10 +1,7 @@
 package factory;
 
 import model.*;
-import rules.ChargeSequenceRule;
-import rules.ColorSequenceRule;
-import rules.CompositeSequenceRule;
-import rules.FragileSequenceRule;
+import rules.*;
 
 import java.awt.Color;
 import java.util.*;
@@ -14,48 +11,52 @@ public class LevelFactory {
     public static Level createSimpleLevel() {
         int capacity = 2;
         List<Tube> tubes = new ArrayList<>();
+        SequenceRule rules = new ColorSequenceRule();
 
-        tubes.add(createTube(capacity, Color.RED, Color.RED));
-        tubes.add(createTube(capacity, Color.BLUE));
-        tubes.add(createTube(capacity, Color.BLUE));
-        tubes.add(createTube(capacity)); // пустая
+        tubes.add(createTube(capacity, rules, Color.RED, Color.RED));
+        tubes.add(createTube(capacity, rules, Color.BLUE));
+        tubes.add(createTube(capacity, rules, Color.BLUE));
+        tubes.add(createTube(capacity, rules)); // пустая
 
-        return new Level(tubes, new ColorSequenceRule());
+        return new Level(tubes, rules);
     }
 
     public static Level createLevelWithColors() {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
+        SequenceRule rules = new ColorSequenceRule();
 
-        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.GREEN, Color.RED));
-        tubes.add(createTube(capacity, Color.BLUE, Color.BLUE, Color.BLUE, Color.BLUE));
-        tubes.add(createTube(capacity, Color.GREEN, Color.RED, Color.GREEN, Color.GREEN));
-        tubes.add(createTube(capacity)); // пустая
-        tubes.add(createTube(capacity)); // пустая
+        tubes.add(createTube(capacity, rules, Color.RED, Color.RED, Color.GREEN, Color.RED));
+        tubes.add(createTube(capacity, rules, Color.BLUE, Color.BLUE, Color.BLUE, Color.BLUE));
+        tubes.add(createTube(capacity, rules, Color.GREEN, Color.RED, Color.GREEN, Color.GREEN));
+        tubes.add(createTube(capacity, rules)); // пустая
+        tubes.add(createTube(capacity, rules)); // пустая
 
-        return new Level(tubes, new ColorSequenceRule());
+        return new Level(tubes, rules);
     }
 
     public static Level createLevelWithFragile() {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
+        SequenceRule rules = new CompositeSequenceRule(new ColorSequenceRule(), new FragileSequenceRule());
 
-        tubes.add(createTube(capacity, Color.RED, Color.RED, Color.GREEN, Color.BLUE));
-        tubes.add(createTube(capacity, Color.BLUE, Color.BLUE, Color.BLUE, Color.RED));
+        tubes.add(createTube(capacity, rules, Color.RED, Color.RED, Color.GREEN, Color.BLUE));
+        tubes.add(createTube(capacity, rules, Color.BLUE, Color.BLUE, Color.BLUE, Color.RED));
 
         Ball greenFragile = new Ball(new ColorProperty(Color.GREEN), new FragileProperty());
 
-        tubes.add(createTube(capacity, Color.GREEN, Color.RED, Color.GREEN, greenFragile));
+        tubes.add(createTube(capacity, rules, Color.GREEN, Color.RED, Color.GREEN, greenFragile));
 
-        tubes.add(createTube(capacity)); // пустая
-        tubes.add(createTube(capacity)); // пустая
+        tubes.add(createTube(capacity, rules)); // пустая
+        tubes.add(createTube(capacity, rules)); // пустая
 
-        return new Level(tubes, new CompositeSequenceRule(new ColorSequenceRule(), new FragileSequenceRule()));
+        return new Level(tubes, rules);
     }
 
     public static Level createLevelWithCharges() {
         int capacity = 4;
         List<Tube> tubes = new ArrayList<>();
+        SequenceRule rules = new CompositeSequenceRule(new ColorSequenceRule(), new ChargeSequenceRule());
 
         Ball redPositive = createBall(Color.RED, Charge.POSITIVE);
         Ball redNegative = createBall(Color.RED, Charge.NEGATIVE);
@@ -66,14 +67,14 @@ public class LevelFactory {
         Ball yellowPositive = createBall(Color.YELLOW, Charge.POSITIVE);
         Ball yellowNegative = createBall(Color.YELLOW, Charge.NEGATIVE);
 
-        tubes.add(createTube(capacity, redPositive, redNegative, Color.RED, redPositive));
-        tubes.add(createTube(capacity, bluePositive, blueNegative, Color.BLUE, greenPositive));
-        tubes.add(createTube(capacity, greenPositive, greenNegative, Color.GREEN, bluePositive));
-        tubes.add(createTube(capacity, yellowPositive, yellowNegative, Color.YELLOW, yellowPositive));
-        tubes.add(createTube(capacity));
-        tubes.add(createTube(capacity));
+        tubes.add(createTube(capacity, rules, redPositive, redNegative, Color.RED, redPositive));
+        tubes.add(createTube(capacity, rules, bluePositive, blueNegative, Color.BLUE, greenPositive));
+        tubes.add(createTube(capacity, rules, greenPositive, greenNegative, Color.GREEN, bluePositive));
+        tubes.add(createTube(capacity, rules, yellowPositive, yellowNegative, Color.YELLOW, yellowPositive));
+        tubes.add(createTube(capacity, rules));
+        tubes.add(createTube(capacity, rules));
 
-        return new Level(tubes, new CompositeSequenceRule(new ColorSequenceRule(), new ChargeSequenceRule()));
+        return new Level(tubes, rules);
     }
 
     public static Level getRandomLevel() {
@@ -95,8 +96,8 @@ public class LevelFactory {
         }
     }
 
-    private static Tube createTube(int capacity, Object... ballSpecs) {
-        Tube tube = new Tube(capacity);
+    private static Tube createTube(int capacity, SequenceRule rules, Object... ballSpecs) {
+        Tube tube = new Tube(capacity, rules);
         List<Ball> balls = new ArrayList<>();
 
         for (Object spec : ballSpecs) {

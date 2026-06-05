@@ -4,13 +4,14 @@ import model.Level;
 import model.Tube;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import rules.ColorSequenceRule;
+import rules.SequenceRule;
 import view.BallWidget;
 import view.LevelView;
 import view.TubeWidget;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -53,7 +54,7 @@ class ViewTest {
     void test03_TubeWidgetCreation() {
         Tube tube = level.getTubes().get(0);
 
-        TubeWidget widget = new TubeWidget(tube, game.getRules());
+        TubeWidget widget = new TubeWidget(tube, tube.getRules());
 
         assertNotNull(widget);
         assertEquals(tube, widget.getTube());
@@ -63,8 +64,9 @@ class ViewTest {
 
     @Test
     void test04_TubeWidgetPreferredSize() {
-        Tube tube = new Tube(4);
-        TubeWidget widget = new TubeWidget(tube, game.getRules());
+        SequenceRule rule = new ColorSequenceRule();
+        Tube tube = new Tube(4, rule);
+        TubeWidget widget = new TubeWidget(tube, rule);
 
         Dimension preferredSize = widget.getPreferredSize();
 
@@ -72,7 +74,6 @@ class ViewTest {
         int expectedHeight = 4 * 30 + 2 + 15;
         assertEquals(expectedHeight, preferredSize.height);
     }
-
 
     @Test
     void test05_LevelViewCreation() {

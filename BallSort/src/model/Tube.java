@@ -9,25 +9,27 @@ public class Tube {
     private final int _capacity;
     private boolean _isSelected = false;
     private List<TubeSelectionListener> _listeners = new ArrayList<>();
+    private final SequenceRule  _rules;
 
-    public Tube(int capacity) {
+    public Tube(int capacity, SequenceRule  rules) {
         _capacity = capacity;
+        _rules = rules;
     }
 
-    public Tube(int capacity, List<Ball> initialBalls) {
-        this(capacity);
+    public Tube(int capacity, List<Ball> initialBalls, SequenceRule  rules) {
+        this(capacity, rules);
         if (initialBalls.size() > capacity) {
             throw new IllegalArgumentException("Too many balls for tube capacity");
         }
         fill(initialBalls);
     }
 
-    public int moveTo(Tube target, SequenceRule rules) {
-        if (!canMoveTo(target, rules)) {
+    public int moveTo(Tube target) {
+        if (!canMoveTo(target)) {
             return 0;
         }
 
-        List<Ball> ballsToMove = peekSequence(rules);
+        List<Ball> ballsToMove = peekSequence();
 
         int spaceAvailable = target.getCapacity() - target.getBallCount();
         int ballsToMoveCount = Math.min(ballsToMove.size(), spaceAvailable);
@@ -47,7 +49,7 @@ public class Tube {
         return _balls.get(getBallCount()-1);
     }
 
-    public List<Ball> peekSequence(SequenceRule rules) {
+    public List<Ball> peekSequence() {
         List<Ball> result = new ArrayList<>();
 
         if (_balls.isEmpty()) {
@@ -61,7 +63,7 @@ public class Tube {
 
         for (int i = _balls.size() - 2; i >= 0 && canStack; i--) {
             Ball nextBall = _balls.get(i);
-            canStack = rules.canStack(nextBall, currentBall);
+            canStack = _rules.canStack(nextBall, currentBall);
 
             if(canStack){
                 currentBall = nextBall;
@@ -121,6 +123,10 @@ public class Tube {
         return Collections.unmodifiableList(_balls);
     }
 
+    public SequenceRule getRules() {
+        return _rules;
+    }
+
     public boolean isSelected() {
         return _isSelected;
     }
@@ -129,12 +135,22 @@ public class Tube {
         _listeners.add(listener);
     }
 
+    public boolean isUniformed() {
+        List<Ball> balls = getBalls();
+
+        for (int i = 0; i < balls.size() - 1; i++) {
+            if (!_rules.canStack(balls.get(i + 1), balls.get(i))) return false;
+        }
+        return true;
+    }
+
+
     private void fill(List<Ball> initialBalls) {
         _balls.clear();
         _balls.addAll(initialBalls);
     }
 
-    private boolean canMoveTo(Tube target, SequenceRule rules) {
+    private boolean canMoveTo(Tube target) {
         if (isEmpty()) {
             return false;
         }
@@ -146,7 +162,7 @@ public class Tube {
         Ball myTopBall = peekOne();
         Ball targetTopBall = target.peekOne();
 
-        return rules.canStack(myTopBall, targetTopBall);
+        return _rules.canStack(myTopBall, targetTopBall);
     }
 
     private void notifySelectionChanged() {
