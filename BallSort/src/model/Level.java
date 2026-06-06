@@ -12,14 +12,12 @@ public class Level {
     private Tube _pendingTube = null;
     private final List<GameEventListener> _listeners = new ArrayList<>();
 
-    public Level(List<Tube> tubes, SequenceRule rules) {
+    public Level(List<Tube> tubes) {
         if (tubes == null || tubes.size() < 2) {
             throw new IllegalArgumentException("Level requires at least 2 tubes");
         }
 
-        for (Tube tube : tubes) {
-            _tubes.add(new Tube(tube.getCapacity(), new ArrayList<>(tube.getBalls()), rules));
-        }
+        _tubes.addAll(tubes);
     }
 
     public void reset() {

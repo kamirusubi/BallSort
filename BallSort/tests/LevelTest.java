@@ -32,28 +32,13 @@ public class LevelTest {
     }
 
     @Test
-    void test02_ConstructorCreatesDeepCopyOfTubes() {
-        Level originalLevel = LevelFactory.createSimpleLevel();
-        List<Tube> originalTubes = originalLevel.getTubes();
-
-        Level newLevel = new Level(originalTubes, rule);
-        List<Tube> newTubes = newLevel.getTubes();
-
-        assertEquals(originalTubes.size(), newTubes.size());
-
-        originalTubes.get(0).popOne();
-
-        assertNotEquals(originalTubes.get(0).getBallCount(), newTubes.get(0).getBallCount());
-    }
-
-    @Test
-    void test03_GetTubesReturnsUnmodifiableList() {
+    void test02_GetTubesReturnsUnmodifiableList() {
         List<Tube> tubesList = level.getTubes();
         assertThrows(UnsupportedOperationException.class, () -> tubesList.add(new Tube(4, rule)));
     }
 
     @Test
-    void test04_ResetRestoresInitialState() {
+    void test03_ResetRestoresInitialState() {
         int initialBallCount0 = level.getTubeAt(0).getBallCount();
         int initialBallCount3 = level.getTubeAt(3).getBallCount();
 
@@ -70,7 +55,7 @@ public class LevelTest {
     }
 
     @Test
-    void test05_SelectTubeTransfersBallsCorrectly() {
+    void test04_SelectTubeTransfersBallsCorrectly() {
         Tube from = level.getTubeAt(0);
         Tube to = level.getTubeAt(3);
 
@@ -88,7 +73,7 @@ public class LevelTest {
     }
 
     @Test
-    void test06_SelectTubeFromEmptyTubeFails() {
+    void test05_SelectTubeFromEmptyTubeFails() {
         Tube from = level.getTubeAt(3);
         Tube to = level.getTubeAt(2);
 
@@ -100,7 +85,7 @@ public class LevelTest {
     }
 
     @Test
-    void test07_SelectTubeToFullTubeFails() {
+    void test06_SelectTubeToFullTubeFails() {
         Tube from = level.getTubeAt(0);
         Tube to = level.getTubeAt(3);
 
@@ -117,19 +102,19 @@ public class LevelTest {
     }
 
     @Test
-    void test08_IsLevelCompletedReturnsTrue() {
+    void test07_IsLevelCompletedReturnsTrue() {
         level.selectTube(level.getTubeAt(1));
         level.selectTube(level.getTubeAt(2));
         assertTrue(level.isLevelCompleted());
     }
 
     @Test
-    void test09_IsLevelCompletedReturnsFalse() {
+    void test08_IsLevelCompletedReturnsFalse() {
         assertFalse(level.isLevelCompleted());
     }
 
     @Test
-    void test10_SelectTubeWithSecondEmptyTube() {
+    void test09_SelectTubeWithSecondEmptyTube() {
         Tube from = level.getTubeAt(1);
         Tube to = level.getTubeAt(3);
 
@@ -144,7 +129,7 @@ public class LevelTest {
     }
 
     @Test
-    void test11_MultipleMovesWorkCorrectly() {
+    void test10_MultipleMovesWorkCorrectly() {
         Tube tube0 = level.getTubeAt(0);
         Tube tube1 = level.getTubeAt(1);
         Tube tube3 = level.getTubeAt(3);
@@ -160,7 +145,7 @@ public class LevelTest {
     }
 
     @Test
-    void test12_ResetAfterMultipleMoves() {
+    void test11_ResetAfterMultipleMoves() {
         List<Integer> initialCounts = level.getTubes().stream()
                 .map(Tube::getBallCount)
                 .toList();
@@ -178,7 +163,7 @@ public class LevelTest {
     }
 
     @Test
-    void test13_SelectSameTubeTwiceDeselects() {
+    void test12_SelectSameTubeTwiceDeselects() {
         Tube tube = level.getTubeAt(0);
 
         level.selectTube(tube);
@@ -189,17 +174,17 @@ public class LevelTest {
     }
 
     @Test
-    void test14_IsLevelCompletedWithEmptyTubes() {
+    void test13_IsLevelCompletedWithEmptyTubes() {
         List<Tube> customTubes = List.of(
                 new Tube(4, rule),
                 new Tube(4, rule)
         );
-        Level emptyLevel = new Level(customTubes, rule);
+        Level emptyLevel = new Level(customTubes);
         assertTrue(emptyLevel.isLevelCompleted());
     }
 
     @Test
-    void test15_LevelCompletedNotifiesListeners() {
+    void test14_LevelCompletedNotifiesListeners() {
         TestGameEventListener listener = new TestGameEventListener();
         level.addEventListener(listener);
 
@@ -211,7 +196,7 @@ public class LevelTest {
     }
 
     @Test
-    void test16_SelectTubeWithDifferentColorsFails() {
+    void test15_SelectTubeWithDifferentColorsFails() {
         Tube from = level.getTubeAt(1);
         Tube to = level.getTubeAt(0);
 
@@ -226,7 +211,7 @@ public class LevelTest {
     }
 
     @Test
-    void test17_CanAddAndRemoveGameEventListener() {
+    void test16_CanAddAndRemoveGameEventListener() {
         TestGameEventListener listener1 = new TestGameEventListener();
         TestGameEventListener listener2 = new TestGameEventListener();
 
@@ -250,7 +235,7 @@ public class LevelTest {
     }
 
     @Test
-    void test18_GetSequenceToMoveReturnsCorrectSequence() {
+    void test17_GetSequenceToMoveReturnsCorrectSequence() {
         Tube tube = level.getTubeAt(0);
         List<Ball> sequence = level.getSequenceToMove(tube);
 
@@ -260,7 +245,7 @@ public class LevelTest {
     }
 
     @Test
-    void test19_GetSequenceToMoveOnEmptyTube() {
+    void test18_GetSequenceToMoveOnEmptyTube() {
         Tube tube = level.getTubeAt(3);
         List<Ball> sequence = level.getSequenceToMove(tube);
 
@@ -268,12 +253,12 @@ public class LevelTest {
     }
 
     @Test
-    void test20_GetPendingTubeReturnsNullInitially() {
+    void test19_GetPendingTubeReturnsNullInitially() {
         assertNull(level.getPendingTube());
     }
 
     @Test
-    void test21_GetPendingTubeAfterSelection() {
+    void test20_GetPendingTubeAfterSelection() {
         Tube tube = level.getTubeAt(0);
         level.selectTube(tube);
         assertEquals(tube, level.getPendingTube());

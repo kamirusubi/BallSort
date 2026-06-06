@@ -18,7 +18,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity, rules, Color.BLUE));
         tubes.add(createTube(capacity, rules)); // пустая
 
-        return new Level(tubes, rules);
+        return new Level(tubes);
     }
 
     public static Level createLevelWithColors() {
@@ -32,7 +32,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity, rules)); // пустая
         tubes.add(createTube(capacity, rules)); // пустая
 
-        return new Level(tubes, rules);
+        return new Level(tubes);
     }
 
     public static Level createLevelWithFragile() {
@@ -50,7 +50,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity, rules)); // пустая
         tubes.add(createTube(capacity, rules)); // пустая
 
-        return new Level(tubes, rules);
+        return new Level(tubes);
     }
 
     public static Level createLevelWithCharges() {
@@ -74,7 +74,7 @@ public class LevelFactory {
         tubes.add(createTube(capacity, rules));
         tubes.add(createTube(capacity, rules));
 
-        return new Level(tubes, rules);
+        return new Level(tubes);
     }
 
     public static Level getRandomLevel() {
